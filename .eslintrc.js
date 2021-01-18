@@ -5,7 +5,7 @@ const config = {
     },
     extends: [
         'eslint:recommended',
-        "plugin:@typescript-eslint/eslint-recommended",
+        'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended'
     ],
     root: true,
@@ -16,7 +16,10 @@ const config = {
     },
     plugins: ['@typescript-eslint'],
     rules: {
-        "@typescript-eslint/ban-ts-comment": 0
+        '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
     },
     settings: {
         react: {

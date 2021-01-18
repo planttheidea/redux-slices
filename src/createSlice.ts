@@ -14,7 +14,7 @@ type ActionCreator<
   Payload extends any,
   Meta extends any,
   Args extends any[]
-> = (...args: Args) => Action<Payload, Meta>;
+> = ((...args: Args) => Action<Payload, Meta>) & { type: string };
 
 type PayloadCreator<Payload extends any, Args extends any[]> = (
   ...args: Args
@@ -38,66 +38,26 @@ function createActionCreator<
   Payload extends any = undefined,
   Meta extends any = undefined,
   Args extends any[] = any[]
->(type: string): (arg?: Args[0]) => Action<Args[0], undefined>;
-function createActionCreator<
-  Payload extends any = undefined,
-  Meta extends any = undefined,
-  Args extends any[] = any[]
 >(
   type: string,
-  payloadCreator: PayloadCreator<Payload, Args>
-): ActionCreator<Payload, undefined, Args>;
-function createActionCreator<
-  Payload extends any = undefined,
-  Meta extends any = undefined,
-  Args extends any[] = any[]
->(
-  type: string,
-  payloadCreator: null | undefined,
-  metaCreator: MetaCreator<Meta, Args>
-): ActionCreator<undefined, Meta, Args>;
-function createActionCreator<
-  Payload extends any = undefined,
-  Meta extends any = undefined,
-  Args extends any[] = any[]
->(
-  type: string,
-  payloadCreator: PayloadCreator<Payload, Args>,
-  metaCreator: MetaCreator<Meta, Args>
-): ActionCreator<Payload, Meta, Args>;
-function createActionCreator<
-  Payload extends any = undefined,
-  Meta extends any = undefined,
-  Args extends any[] = any[]
->(
-  type: string,
-  payloadCreator?: PayloadCreator<Payload, Args> | null | undefined,
-  metaCreator?: MetaCreator<Meta, Args> | undefined
+  payloadCreator: PayloadCreator<Payload, Args> | null | undefined,
+  metaCreator: MetaCreator<Meta, Args> | undefined
 ) {
+  let actionCreator: any;
+  
   if (payloadCreator && metaCreator) {
-    return (...args: Args) => ({
-      meta: metaCreator(...args),
-      payload: payloadCreator(...args),
-      type,
-    });
+    actionCreator = (...args: Args) => ({ payload: payloadCreator(...args), meta: metaCreator(...args), type });
+  } else if (payloadCreator) {
+    actionCreator = ((...args: Args) => ({ payload: payloadCreator(...args), type }));
+  } else if (metaCreator) {
+    actionCreator = (...args: Args) => ({ meta: metaCreator(...args), type })
+  } else {
+    actionCreator = (payload?: Payload) => ({ payload, type });
   }
 
-  if (payloadCreator) {
-    return (...args: Args) => ({
-      payload: payloadCreator(...args),
-      type,
-    });
-  }
+  actionCreator.type = type;
 
-  if (metaCreator) {
-    return (...args: Args) => ({
-      meta: metaCreator(...args),
-      type,
-    });
-  }
-
-  return (arg?: Args[0]) =>
-    arg === undefined ? { type } : { payload: arg, type };
+  return actionCreator as ActionCreator<Payload, Meta, Args>;
 }
 
 function isStrictlyEqual(prev: any, next: any) {
@@ -127,16 +87,10 @@ function createSlice<SliceName extends string, State extends AnyState>(
   }
 
   const resetName = `${name}/${RESET_SLICE_NAME}`;
+  const reset = createActionCreator<undefined, undefined, []>('reset', undefined, undefined);
 
-  function reset() {
-    return { type: resetName };
-  }
-
-  const actionCreators: Record<
-    string,
-    ReturnType<typeof createActionCreator>
-  > = {
-    reset: reset as ActionCreator<unknown, unknown, []>,
+  const actionCreators: Record<string, ActionCreator<any, any, any[]>> = {
+    reset,
   };
   const actionHandlers: Record<string, Reducer<State>> = {
     [resetName]: () => initialState,
@@ -176,13 +130,7 @@ function createSlice<SliceName extends string, State extends AnyState>(
 
     const type = `${name}/${unscopedType}`;
 
-    const actionCreator = createActionCreator<Payload, Meta>(
-      type,
-      getPayload,
-      getMeta
-    ) as ActionCreator<Payload, Meta, Args> & { type: string };
-
-    actionCreator.type = type;
+    const actionCreator = createActionCreator<Payload, Meta, Args>(type, getPayload, getMeta);
 
     Object.defineProperty(actionCreator, 'toString', {
       configurable: true,
@@ -191,6 +139,7 @@ function createSlice<SliceName extends string, State extends AnyState>(
       writable: true,
     });
 
+    // @ts-ignore - Allow narrower typing
     actionCreators[type] = actionCreator;
     actionTypes[type] = type;
 
@@ -201,7 +150,7 @@ function createSlice<SliceName extends string, State extends AnyState>(
     selector: (state: State, ...args: Args) => Result
   ) {
     return (state: ParentState<SliceName, State>, ...args: Args) =>
-      selector.apply(null, [].concat(state[name], args));
+      selector(state[name], ...args);
   }
 
   function createMemoizedSelector<Args extends unknown[], Result>(
@@ -209,7 +158,7 @@ function createSlice<SliceName extends string, State extends AnyState>(
     isEqual = isStrictlyEqual
   ) {
     let prevSlice: State;
-    let prevArgs = [] as Args;
+    let prevArgs = [] as unknown as Args;
     let prevResult: Result;
 
     return (state: ParentState<SliceName, State>, ...args: Args) => {
@@ -223,7 +172,7 @@ function createSlice<SliceName extends string, State extends AnyState>(
       ) {
         prevSlice = slice;
         prevArgs = args;
-        prevResult = selector.apply(null, [].concat(slice, args));
+        prevResult = selector(slice, ...args);
       }
 
       return prevResult;

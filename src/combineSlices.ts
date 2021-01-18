@@ -17,7 +17,7 @@ type DeepReadonlyArray<T> = ReadonlyArray<DeepReadonly<T>>;
 
 type DeepReadonly<T> = T extends (infer R)[]
   ? DeepReadonlyArray<R>
-  : T extends Record<string, any>
+  : T extends object
   ? DeepReadonlyObject<T>
   : T;
 
@@ -43,14 +43,12 @@ function combineSlices<
     };
 
   const otherSlices = otherReducers
-    ? ((Object.keys(otherReducers).map((name) => ({
+    ? Object.keys(otherReducers).map((name) => ({
         name,
         reduce: otherReducers[name],
-      })) as unknown) as StateSlice[])
+      }))
     : [];
-  const reducerSlices: StateSlice[] = []
-    .concat(slices, otherSlices)
-    .filter((slice) => typeof slice.reduce === 'function');
+  const reducerSlices = [...slices, ...(otherSlices as StateSlice[])].filter((slice) => typeof slice.reduce === 'function');
   const stateSize = reducerSlices.length;
 
   const {
