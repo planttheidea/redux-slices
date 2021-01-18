@@ -17,7 +17,7 @@ type DeepReadonlyArray<T> = ReadonlyArray<DeepReadonly<T>>;
 
 type DeepReadonly<T> = T extends (infer R)[]
   ? DeepReadonlyArray<R>
-  : T extends object
+  : T extends Record<string, any>
   ? DeepReadonlyObject<T>
   : T;
 
