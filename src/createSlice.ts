@@ -1,6 +1,4 @@
-/* eslint-disable guard-for-in, no-redeclare, no-restricted-syntax, no-confusing-arrow, implicit-arrow-linebreak, prefer-spread */
-
-type AnyState = Record<string, any>;
+export type AnyState = Record<string, any>;
 
 type Action<Payload extends any, Meta extends any> = Payload extends undefined
   ? { meta: Meta; type: string }

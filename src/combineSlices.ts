@@ -1,25 +1,11 @@
-/* eslint-disable guard-for-in, no-restricted-syntax, no-param-reassign, no-use-before-define */
-
 import createSlice from './createSlice';
 
-import type { Reducer } from './createSlice';
+import type { AnyState, Reducer } from './createSlice';
 
 type SliceTypes = {
   explicit: Record<string, Record<string, true>>;
   unknown: Record<string, true>;
 };
-
-type DeepReadonlyObject<T> = {
-  readonly [P in keyof T]: DeepReadonly<T[P]>;
-};
-
-type DeepReadonlyArray<T> = ReadonlyArray<DeepReadonly<T>>;
-
-type DeepReadonly<T> = T extends (infer R)[]
-  ? DeepReadonlyArray<R>
-  : T extends object
-  ? DeepReadonlyObject<T>
-  : T;
 
 type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (
   x: infer R
@@ -29,18 +15,16 @@ type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (
 
 function combineSlices<
   StateSlice extends ReturnType<typeof createSlice>,
-  OtherReducers extends Record<string, Reducer<Record<string, any>>>
+  OtherReducers extends Record<string, Reducer<AnyState>>
 >(slices: readonly StateSlice[], otherReducers?: OtherReducers) {
   // This is a fun trick, where we leverage the `StateSlice` generic (which will include all
   // possible slices) to grab the first parameter of the `getState` method, which is the
   // complete state. This creates a union of all slices. We then use `UnionToIntersection`
   // to convert this to an intersection of all slices.
-  type State = UnionToIntersection<
-    Readonly<Parameters<StateSlice['getState']>[0]>
-  > &
-    {
-      [Key in keyof OtherReducers]: ReturnType<OtherReducers[Key]>;
-    };
+  type State = UnionToIntersection<ReturnType<StateSlice['reduce']>> &
+  {
+    [Key in keyof OtherReducers]: ReturnType<OtherReducers[Key]>;
+  };
 
   const otherSlices = otherReducers
     ? Object.keys(otherReducers).map((name) => ({
@@ -101,7 +85,7 @@ function combineSlices<
       }
     }
 
-    return ((hasChanged ? nextState : state) as unknown) as DeepReadonly<State>;
+    return hasChanged ? nextState : state;
   };
 }
 
