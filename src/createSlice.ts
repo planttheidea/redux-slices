@@ -3,9 +3,7 @@
 type AnyState = Record<string, any>;
 
 type Action<Payload extends any, Meta extends any> = Payload extends undefined
-  ? Meta extends undefined
-    ? { type: string }
-    : { meta: Meta; type: string }
+  ? { meta: Meta; type: string }
   : Meta extends undefined
   ? { payload: Payload; type: string }
   : { meta: Meta; payload: Payload; type: string };
