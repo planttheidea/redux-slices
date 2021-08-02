@@ -21,7 +21,6 @@ export default class Slice<Name extends string, State extends AnyState> {
     this.createAction = this.createAction.bind(this);
     this.createMemoizedSelector = this.createMemoizedSelector.bind(this);
     this.createSelector = this.createSelector.bind(this);
-    this.getState = this.getState.bind(this);
     this.reducer = this.reducer.bind(this);
     this.setReducer = this.setReducer.bind(this);
 
@@ -145,15 +144,6 @@ export default class Slice<Name extends string, State extends AnyState> {
     // Simple wrapper that selects from the specific slice of state.
     return (state: ParentState<Name, State>, ...remainingArgs: Args) =>
       selector(state[this.name], ...remainingArgs);
-  }
-
-  /**
-   * Get the current state of the slice
-   *
-   * @returns - current state of the slice
-   */
-  getState() {
-    return this.__state;
   }
 
   /**
