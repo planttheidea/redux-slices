@@ -177,26 +177,21 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param action - dispatched action
    * @returns - next slice state
    */
-  reducer<Action extends AnyAction>(state: State, action: Action) {
-    if (!state) {
-      state = this.__s;
-    }
-
+  reducer<Action extends AnyAction>(
+    state: State = this.initialState,
+    action: Action,
+  ) {
     if (this.__h) {
       const handler = this.__h[action.type];
 
-      if (handler) {
-        // If a handler for the given action exists, then we can call it directly instead of
-        // leveraging a wrapping reducer.
-        this.__s = handler(state, action);
-      }
-
-      return this.__s;
+      // If a handler for the given action exists, then we can call it directly instead of
+      // leveraging a wrapping reducer, otherwise we ignore the action and return existing state.
+      return handler ? (this.__s = handler(state, action)) : this.__s;
     }
 
     if (this.__r) {
       // If a functional reducer is used instead of the custom handlers, just call it directly.
-      return this.__r(state, action);
+      return (this.__s = this.__r(state, action));
     }
 
     // This should never happen, but it would be a scenario where `setReducer` was explicitly called with `null`.
