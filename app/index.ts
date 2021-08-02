@@ -80,14 +80,6 @@ const store = createStore(
   ),
 );
 
-const state = store.getState();
-
-// state.device.deep.nested = 'other';
-
-const sliceState = counter.getState();
-
-console.log({ state, sliceState });
-
 // const { not } = state.notSlice;
 
 let prevState = store.getState();
