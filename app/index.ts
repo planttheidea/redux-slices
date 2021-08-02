@@ -16,6 +16,7 @@ const increment = counter.createAction(
 );
 const decrement = counter.createAction('decrement');
 const resetCounter = counter.createAction('reset', () => counter.initialState);
+const sendError = counter.createAction('error', () => new Error('boom'));
 
 const getCount = counter.createSelector((state) => state.count);
 const getDoubledCount = counter.createMemoizedSelector(({ count }) => {
@@ -103,6 +104,7 @@ store.subscribe(() => {
 store.dispatch(increment(2));
 store.dispatch(resetCounter());
 store.dispatch(resetCounter());
+store.dispatch(sendError());
 store.dispatch(resume());
 store.dispatch(resetDevice());
 store.dispatch(resetDevice());

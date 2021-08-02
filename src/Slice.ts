@@ -1,4 +1,4 @@
-import { isStrictlyEqual, some } from './utils';
+import { applyErrorToAction, isStrictlyEqual, some } from './utils';
 
 import type {
   ActionCreator,
@@ -47,12 +47,11 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param getMeta - optional handler to get the value used for the `meta` property`
    * @returns - action creator, specific to the payload and meta expected
    */
-  createAction<
-    Type extends string,
-    Args extends unknown[],
-    PayloadCreator,
-    MetaCreator,
-  >(unscopedType: Type, getPayload?: PayloadCreator, getMeta?: MetaCreator) {
+  createAction<Type extends string, PayloadCreator, MetaCreator>(
+    unscopedType: Type,
+    getPayload?: PayloadCreator,
+    getMeta?: MetaCreator,
+  ) {
     const type = `${this.name}/${unscopedType}` as const;
 
     let actionCreator: any;
@@ -63,18 +62,18 @@ export default class Slice<Name extends string, State extends AnyState> {
 
     if (typeof getPayload === 'function' && typeof getMeta === 'function') {
       actionCreator = function () {
-        return {
+        return applyErrorToAction({
           payload: getPayload.apply(null, arguments),
           meta: getMeta.apply(null, arguments),
           type,
-        };
+        });
       };
     } else if (typeof getPayload === 'function') {
       actionCreator = function () {
-        return {
+        return applyErrorToAction({
           payload: getPayload.apply(null, arguments),
           type,
-        };
+        });
       };
     } else if (typeof getMeta === 'function') {
       actionCreator = function () {
@@ -84,11 +83,8 @@ export default class Slice<Name extends string, State extends AnyState> {
         };
       };
     } else {
-      actionCreator = function (payload?: Args[0]) {
-        return {
-          payload,
-          type,
-        };
+      actionCreator = function () {
+        return { type };
       };
     }
 

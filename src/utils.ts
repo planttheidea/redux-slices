@@ -22,6 +22,14 @@ export const addToString = <
   return actionCreator as ActionCreator & { type: Type };
 };
 
+export const applyErrorToAction = (action: GeneralAction) => {
+  if (action.payload instanceof Error) {
+    action.error = true;
+  }
+
+  return action;
+};
+
 /**
  * Are the two values passed strictly equal to one another.
  *
@@ -30,6 +38,13 @@ export const addToString = <
  * @returns - are the values passed strictly equal
  */
 export const isStrictlyEqual = (a: any, b: any) => a === b;
+
+type GeneralAction = Partial<{
+  error: true;
+  meta: any;
+  payload: any;
+  type: string;
+}>;
 
 /**
  * Does a value in the array match the given predicate.
