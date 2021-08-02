@@ -39,6 +39,13 @@ export type ActionCreator<
     ) => FluxStandardAction<Type, undefined, ReturnType<MetaCreator>>
   : () => FluxStandardAction<Type, undefined, undefined>;
 
+export type GeneralAction = Partial<{
+  error: true;
+  meta: any;
+  payload: any;
+  type: string;
+}>;
+
 export type ParentState<SliceName extends string, State extends any> = Record<
   string,
   any
@@ -50,4 +57,11 @@ export type Reducer<State extends AnyState, Action extends any = any> = ((
   action: Action,
 ) => State) & {
   __keys?: string[];
+};
+
+export type ReducerMap<
+  State extends AnyState,
+  ActionMap extends Record<string, (...args: any) => GeneralAction>,
+> = {
+  [Type in keyof ActionMap]: Reducer<State, ReturnType<ActionMap[Type]>>;
 };

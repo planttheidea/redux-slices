@@ -1,3 +1,5 @@
+import type { GeneralAction } from './internalTypes';
+
 /**
  * Add the `type` as a static property onto the `actionCreator`.
  *
@@ -38,13 +40,6 @@ export const applyErrorToAction = (action: GeneralAction) => {
  * @returns - are the values passed strictly equal
  */
 export const isStrictlyEqual = (a: any, b: any) => a === b;
-
-type GeneralAction = Partial<{
-  error: true;
-  meta: any;
-  payload: any;
-  type: string;
-}>;
 
 /**
  * Does a value in the array match the given predicate.

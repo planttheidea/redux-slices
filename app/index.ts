@@ -3,6 +3,7 @@ import thunk from 'redux-thunk';
 // import { createSelector } from 'reselect';
 import { createSlice } from '../src';
 
+import type { List, Union } from 'ts-toolbelt';
 import type { ThunkAction } from 'redux-thunk';
 
 const counter = createSlice('counter', {
@@ -25,15 +26,18 @@ const getDoubledCount = counter.createMemoizedSelector(({ count }) => {
   return count * 2;
 });
 
-counter.setReducer({
+type ActionMap = {
+  [decrement.type]: typeof decrement;
+  [increment.type]: typeof increment;
+  [resetCounter.type]: typeof resetCounter;
+};
+
+counter.setReducer<ActionMap>({
   [decrement.type]: (currentState) => ({
     ...currentState,
     count: currentState.count - 1,
   }),
-  [increment.type]: (
-    currentState,
-    { payload = 1 }: ReturnType<typeof increment>,
-  ) => ({
+  [increment.type]: (currentState, { payload = 1 }) => ({
     ...currentState,
     count: currentState.count + payload,
   }),

@@ -3,8 +3,10 @@ import { applyErrorToAction, isStrictlyEqual, some } from './utils';
 import type {
   ActionCreator,
   AnyState,
+  GeneralAction,
   ParentState,
   Reducer,
+  ReducerMap,
 } from './internalTypes';
 import type { AnyAction } from 'redux';
 
@@ -210,7 +212,9 @@ export default class Slice<Name extends string, State extends AnyState> {
    *
    * @param handler - map of action types to handle, or a standard reducer function
    */
-  setReducer(handler: Reducer<State> | Record<string, Reducer<State>>) {
+  setReducer<
+    ActionMap extends Record<string, (...args: any[]) => GeneralAction>,
+  >(handler: Reducer<State> | ReducerMap<State, ActionMap>) {
     if (typeof handler === 'function') {
       this.__reducer = handler;
       this.__handledTypes = null;
