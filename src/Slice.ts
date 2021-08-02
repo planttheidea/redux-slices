@@ -57,21 +57,39 @@ export default class Slice<Name extends string, State extends AnyState> {
 
     let actionCreator: any;
 
+    // Below the use of `.apply(null, arguments)` is used instead of `(...args)` to avoid the runtime cost
+    // of unnecessarily converting the arguments into an array. They are simply passed through, so no need
+    // to shallowly clone them.
+
     if (typeof getPayload === 'function' && typeof getMeta === 'function') {
-      actionCreator = (...args: Args) => ({
-        payload: getPayload(...args),
-        meta: getMeta(...args),
-        type,
-      });
+      actionCreator = function () {
+        return {
+          payload: getPayload.apply(null, arguments),
+          meta: getMeta.apply(null, arguments),
+          type,
+        };
+      };
     } else if (typeof getPayload === 'function') {
-      actionCreator = (...args: Args) => ({
-        payload: getPayload(...args),
-        type,
-      });
+      actionCreator = function () {
+        return {
+          payload: getPayload.apply(null, arguments),
+          type,
+        };
+      };
     } else if (typeof getMeta === 'function') {
-      actionCreator = (...args: Args) => ({ meta: getMeta(...args), type });
+      actionCreator = function () {
+        return {
+          meta: getMeta.apply(null, arguments),
+          type,
+        };
+      };
     } else {
-      actionCreator = (payload?: Args[0]) => ({ payload, type });
+      actionCreator = function (payload?: Args[0]) {
+        return {
+          payload,
+          type,
+        };
+      };
     }
 
     Object.defineProperty(actionCreator, 'type', {
