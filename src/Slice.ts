@@ -13,7 +13,7 @@ export default class Slice<Name extends string, State extends AnyState> {
   private __reducer: Reducer<State> | null;
   private __state: State;
 
-  initialState: State;
+  initialState: Readonly<State>;
   name: Name;
 
   constructor(name: Name, initialState: State = {} as State) {
@@ -29,7 +29,7 @@ export default class Slice<Name extends string, State extends AnyState> {
     this.__reducer = () => initialState;
     this.__state = initialState;
 
-    this.initialState = initialState;
+    this.initialState = initialState as Readonly<State>;
     this.name = name;
   }
 
