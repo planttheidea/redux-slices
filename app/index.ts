@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 // import { createSelector } from 'reselect';
 import { createSlice } from '../src';
 
-import type { List, Union } from 'ts-toolbelt';
 import type { ThunkAction } from 'redux-thunk';
 
 const counter = createSlice('counter', {

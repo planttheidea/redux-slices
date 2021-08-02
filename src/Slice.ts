@@ -62,21 +62,23 @@ export default class Slice<Name extends string, State extends AnyState> {
     // of unnecessarily converting the arguments into an array. They are simply passed through, so no need
     // to shallowly clone them.
 
-    if (typeof getPayload === 'function' && typeof getMeta === 'function') {
-      actionCreator = function () {
-        return applyErrorToAction({
-          payload: getPayload.apply(null, arguments),
-          meta: getMeta.apply(null, arguments),
-          type,
-        });
-      };
-    } else if (typeof getPayload === 'function') {
-      actionCreator = function () {
-        return applyErrorToAction({
-          payload: getPayload.apply(null, arguments),
-          type,
-        });
-      };
+    if (typeof getPayload === 'function') {
+      if (typeof getMeta === 'function') {
+        actionCreator = function () {
+          return applyErrorToAction({
+            payload: getPayload.apply(null, arguments),
+            meta: getMeta.apply(null, arguments),
+            type,
+          });
+        };
+      } else {
+        actionCreator = function () {
+          return applyErrorToAction({
+            payload: getPayload.apply(null, arguments),
+            type,
+          });
+        };
+      }
     } else if (typeof getMeta === 'function') {
       actionCreator = function () {
         return {
@@ -90,11 +92,12 @@ export default class Slice<Name extends string, State extends AnyState> {
       };
     }
 
+    // Set as frozen property to avoid accidental overwrites, but also prevent enumeration.
     Object.defineProperty(actionCreator, 'type', {
-      configurable: true,
+      configurable: false,
       enumerable: false,
       value: type,
-      writable: true,
+      writable: false,
     });
 
     return actionCreator as ActionCreator<
