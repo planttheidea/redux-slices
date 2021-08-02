@@ -1,52 +1,59 @@
-import typescript from '@rollup/plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
+import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
-import tsc from 'typescript';
-
 import pkg from './package.json';
 
-const UMD_CONFIG = {
+const EXTERNALS = [
+  ...Object.keys(pkg.dependencies || {}),
+  ...Object.keys(pkg.peerDependencies || {}),
+];
+
+const EXTENSIONS = ['.js', '.ts', '.tsx'];
+
+const DEFAULT_OUTPUT = {
+  exports: 'named',
+  name: pkg.name,
+  sourcemap: true,
+};
+
+const DEFAULT_CONFIG = {
+  external: EXTERNALS,
   input: 'src/index.ts',
-  output: {
-    exports: 'named',
-    file: pkg.browser,
-    format: 'umd',
-    name: pkg.name,
-    sourcemap: true,
-  },
-  plugins: [typescript({ typescript: tsc })],
-};
-
-const FORMATTED_CONFIG = {
-  ...UMD_CONFIG,
   output: [
-    {
-      ...UMD_CONFIG.output,
-      file: pkg.main,
-      format: 'cjs',
-    },
-    {
-      ...UMD_CONFIG.output,
-      file: pkg.module,
-      format: 'es',
-    },
+    { ...DEFAULT_OUTPUT, file: pkg.browser, format: 'umd' },
+    { ...DEFAULT_OUTPUT, file: pkg.main, format: 'cjs' },
+    { ...DEFAULT_OUTPUT, file: pkg.module, format: 'es' },
   ],
-};
-
-const MINIFIED_CONFIG = {
-  ...UMD_CONFIG,
-  output: {
-    ...UMD_CONFIG.output,
-    file: pkg.browser.replace('.js', '.min.js'),
-    sourcemap: false,
-  },
   plugins: [
-    ...UMD_CONFIG.plugins,
-    terser({
-      compress: {
-        passes: 3,
-      },
+    resolve({
+      extensions: EXTENSIONS,
+      mainFields: ['module', 'jsnext:main', 'main'],
+    }),
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
+      extensions: EXTENSIONS,
+      include: ['src/*'],
     }),
   ],
 };
 
-export default [UMD_CONFIG, FORMATTED_CONFIG, MINIFIED_CONFIG];
+export default [
+  DEFAULT_CONFIG,
+  {
+    ...DEFAULT_CONFIG,
+    output: {
+      ...DEFAULT_OUTPUT,
+      file: pkg.browser.replace('.js', '.min.js'),
+      format: 'umd',
+    },
+    plugins: [
+      ...DEFAULT_CONFIG.plugins,
+      terser({
+        compress: {
+          passes: 3,
+        },
+      }),
+    ],
+  },
+];
