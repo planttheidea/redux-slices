@@ -117,6 +117,8 @@ export default class Slice<Name extends string, State extends AnyState> {
     selector: (state: State, ...args: Args) => Result,
     isEqual = isStrictlyEqual,
   ) {
+    const name = this.name;
+
     let prevState: State;
     let prevArgs = [] as unknown as Args;
     let prevResult: Result;
@@ -125,7 +127,7 @@ export default class Slice<Name extends string, State extends AnyState> {
       state: ParentState<Name, State>,
       ...args: Args
     ) => {
-      const nextState = state[this.name];
+      const nextState = state[name];
 
       if (
         !prevState ||
@@ -159,9 +161,11 @@ export default class Slice<Name extends string, State extends AnyState> {
   createSelector<Args extends unknown[], Returns extends any>(
     selector: (state: State, ...remainingArgs: Args) => Returns,
   ) {
+    const name = this.name;
+
     // Simple wrapper that selects from the specific slice of state.
     return (state: ParentState<Name, State>, ...remainingArgs: Args) =>
-      selector(state[this.name], ...remainingArgs);
+      selector(state[name], ...remainingArgs);
   }
 
   /**
