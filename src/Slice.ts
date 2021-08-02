@@ -7,8 +7,11 @@ import type {
   ParentState,
   Reducer,
   ReducerMap,
+  Selector,
 } from './internalTypes';
 import type { AnyAction } from 'redux';
+
+const slice = Array.prototype.slice;
 
 export default class Slice<Name extends string, State extends AnyState> {
   private __h: Record<string, Reducer<State>> | null;
@@ -114,7 +117,7 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param isEqual - method to determine equality of arguments passed to the selector
    * @returns - result of calling the selector
    */
-  createMemoizedSelector<Args extends unknown[], Result>(
+  createMemoizedSelector<Args extends unknown[], Result extends any>(
     selector: (state: State, ...args: Args) => Result,
     isEqual = isStrictlyEqual,
   ) {
@@ -124,25 +127,24 @@ export default class Slice<Name extends string, State extends AnyState> {
     let prevArgs = [] as unknown as Args;
     let prevResult: Result;
 
-    const memoizedSelector = (
-      state: ParentState<Name, State>,
-      ...args: Args
-    ) => {
+    const memoizedSelector = function (state: ParentState<Name, State>) {
+      // Leveraging `slice.call(arguments)` to avoid inline for loop.
+      const remainingArgs = slice.call(arguments, 1) as Args;
       const nextState = state[name];
 
       if (
         !prevState ||
         prevState !== nextState ||
-        args.length !== prevArgs.length ||
-        some(args, (arg, index) => isEqual(prevArgs[index], arg))
+        remainingArgs.length !== prevArgs.length ||
+        some(remainingArgs, (arg, index) => isEqual(prevArgs[index], arg))
       ) {
         prevState = nextState;
-        prevArgs = args;
-        prevResult = selector(nextState, ...args);
+        prevArgs = remainingArgs;
+        prevResult = selector(nextState, ...remainingArgs);
       }
 
       return prevResult;
-    };
+    } as unknown as Selector<Name, State, Args, Result> & { clear: () => void };
 
     memoizedSelector.clear = () => {
       prevState = undefined as unknown as State;
@@ -159,14 +161,18 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param selector - slice-specific selector function
    * @returns - result of calling the selector
    */
-  createSelector<Args extends unknown[], Returns extends any>(
-    selector: (state: State, ...remainingArgs: Args) => Returns,
+  createSelector<Args extends unknown[], Result extends any>(
+    selector: (state: State, ...remainingArgs: Args) => Result,
   ) {
     const name = this.name;
 
     // Simple wrapper that selects from the specific slice of state.
-    return (state: ParentState<Name, State>, ...remainingArgs: Args) =>
-      selector(state[name], ...remainingArgs);
+    return function (state: ParentState<Name, State>) {
+      // Leveraging `slice.call(arguments)` to avoid inline for loop.
+      const remainingArgs = slice.call(arguments, 1) as Args;
+
+      return selector(state[name], ...remainingArgs);
+    } as unknown as Selector<Name, State, Args, Result>;
   }
 
   /**

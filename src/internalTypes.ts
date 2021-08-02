@@ -65,3 +65,10 @@ export type ReducerMap<
 > = {
   [Type in keyof ActionMap]: Reducer<State, ReturnType<ActionMap[Type]>>;
 };
+
+export type Selector<
+  Name extends string,
+  State extends AnyState,
+  Args extends unknown[],
+  Result extends any,
+> = (state: ParentState<Name, State>, ...remainingArgs: Args) => Result;
