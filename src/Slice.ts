@@ -9,9 +9,9 @@ import type {
 import type { AnyAction } from 'redux';
 
 export default class Slice<Name extends string, State extends AnyState> {
-  __handledTypes: Record<string, Reducer<State>> | null;
-  __reducer: Reducer<State> | null;
-  __state: State;
+  private __handledTypes: Record<string, Reducer<State>> | null;
+  private __reducer: Reducer<State> | null;
+  private __state: State;
 
   initialState: State;
   name: Name;
