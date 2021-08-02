@@ -6,7 +6,7 @@ export type ActionCreator<
   Type extends string,
   PayloadCreator,
   MetaCreator,
-> = (PayloadCreator extends (...args: any[]) => any
+> = PayloadCreator extends (...args: any[]) => any
   ? MetaCreator extends (...args: any[]) => any
     ? (
         ...args: Tuple.Longest<
@@ -29,7 +29,7 @@ export type ActionCreator<
     }
   : <Payload extends any>(
       payload?: Payload,
-    ) => { payload: Payload; type: Type }) & { type: Type };
+    ) => { payload: Payload; type: Type };
 
 export type ParentState<SliceName extends string, State extends any> = Record<
   string,

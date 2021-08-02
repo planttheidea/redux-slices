@@ -82,10 +82,10 @@ export default class Slice<Name extends string, State extends AnyState> {
     });
 
     return actionCreator as ActionCreator<
-      `${Name}/${Type}`,
+      typeof type,
       PayloadCreator,
       MetaCreator
-    >;
+    > & { type: typeof type };
   }
 
   /**
