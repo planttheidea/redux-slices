@@ -1,4 +1,4 @@
-import { addToString, isStrictlyEqual, some } from './utils';
+import { isStrictlyEqual, some } from './utils';
 
 import type {
   ActionCreator,
@@ -13,7 +13,6 @@ export default class Slice<Name extends string, State extends AnyState> {
   __reducer: Reducer<State> | null;
   __state: State;
 
-  actionCreators: Record<string, ActionCreator<string, any, any>>;
   initialState: State;
   name: Name;
 
@@ -31,7 +30,6 @@ export default class Slice<Name extends string, State extends AnyState> {
     this.__reducer = () => initialState;
     this.__state = initialState;
 
-    this.actionCreators = {};
     this.initialState = initialState;
     this.name = name;
   }
@@ -58,12 +56,6 @@ export default class Slice<Name extends string, State extends AnyState> {
   >(unscopedType: Type, getPayload?: PayloadCreator, getMeta?: MetaCreator) {
     const type = `${this.name}/${unscopedType}` as const;
 
-    if (this.actionCreators[type]) {
-      throw new ReferenceError(
-        `An action creator for \`${type}\` already exists for \`${this.name}\`.`,
-      );
-    }
-
     let actionCreator: any;
 
     if (typeof getPayload === 'function' && typeof getMeta === 'function') {
@@ -83,18 +75,18 @@ export default class Slice<Name extends string, State extends AnyState> {
       actionCreator = (payload?: Args[0]) => ({ payload, type });
     }
 
-    actionCreator = addToString(
-      type,
-      actionCreator as ActionCreator<
-        `${Name}/${Type}`,
-        PayloadCreator,
-        MetaCreator
-      >,
-    );
+    Object.defineProperty(actionCreator, 'type', {
+      configurable: true,
+      enumerable: false,
+      value: type,
+      writable: true,
+    });
 
-    this.actionCreators[type] = actionCreator;
-
-    return actionCreator;
+    return actionCreator as ActionCreator<
+      `${Name}/${Type}`,
+      PayloadCreator,
+      MetaCreator
+    > & { type: typeof type };
   }
 
   /**
