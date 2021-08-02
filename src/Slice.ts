@@ -86,7 +86,7 @@ export default class Slice<Name extends string, State extends AnyState> {
       `${Name}/${Type}`,
       PayloadCreator,
       MetaCreator
-    > & { type: typeof type };
+    >;
   }
 
   /**
