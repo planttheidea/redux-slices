@@ -11,9 +11,9 @@ import type {
 import type { AnyAction } from 'redux';
 
 export default class Slice<Name extends string, State extends AnyState> {
-  private __handledTypes: Record<string, Reducer<State>> | null;
-  private __reducer: Reducer<State> | null;
-  private __state: State;
+  private __h: Record<string, Reducer<State>> | null;
+  private __r: Reducer<State> | null;
+  private __s: State;
 
   initialState: Readonly<State>;
   name: Name;
@@ -26,10 +26,10 @@ export default class Slice<Name extends string, State extends AnyState> {
     this.reducer = this.reducer.bind(this);
     this.setReducer = this.setReducer.bind(this);
 
-    this.__handledTypes = null;
+    this.__h = null;
     // Provide placeholder reducer for slices that don't have any handlers.
-    this.__reducer = () => initialState;
-    this.__state = initialState;
+    this.__r = () => initialState;
+    this.__s = initialState;
 
     this.initialState = initialState as Readonly<State>;
     this.name = name;
@@ -179,24 +179,24 @@ export default class Slice<Name extends string, State extends AnyState> {
    */
   reducer<Action extends AnyAction>(state: State, action: Action) {
     if (!state) {
-      state = this.__state;
+      state = this.__s;
     }
 
-    if (this.__handledTypes) {
-      const handler = this.__handledTypes[action.type];
+    if (this.__h) {
+      const handler = this.__h[action.type];
 
       if (handler) {
         // If a handler for the given action exists, then we can call it directly instead of
         // leveraging a wrapping reducer.
-        this.__state = handler(state, action);
+        this.__s = handler(state, action);
       }
 
-      return this.__state;
+      return this.__s;
     }
 
-    if (this.__reducer) {
+    if (this.__r) {
       // If a functional reducer is used instead of the custom handlers, just call it directly.
-      return this.__reducer(state, action);
+      return this.__r(state, action);
     }
 
     // This should never happen, but it would be a scenario where `setReducer` was explicitly called with `null`.
@@ -219,11 +219,11 @@ export default class Slice<Name extends string, State extends AnyState> {
     ActionMap extends Record<string, (...args: any[]) => GeneralAction>,
   >(handler: Reducer<State> | ReducerMap<State, ActionMap>) {
     if (typeof handler === 'function') {
-      this.__reducer = handler;
-      this.__handledTypes = null;
+      this.__r = handler;
+      this.__h = null;
     } else if (typeof handler === 'object') {
-      this.__reducer = null;
-      this.__handledTypes = handler;
+      this.__r = null;
+      this.__h = handler;
     } else {
       throw new Error(
         `Handlers passed to \`Slice<${this.name}>.setReducer\` must be either a reducer function or an object of reducers that handle specific action types.`,
