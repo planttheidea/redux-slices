@@ -10,13 +10,12 @@ const counter = createSlice('counter', {
   deep: { nested: 'object' },
 });
 
-const { reset: resetSlice } = counter;
-
 const increment = counter.createAction(
   'increment',
   (number?: number) => number,
 );
 const decrement = counter.createAction('decrement');
+const resetCounter = counter.createAction('reset', () => counter.initialState);
 
 const getCount = counter.createSelector((state) => state.count);
 const getDoubledCount = counter.createMemoizedSelector(({ count }) => {
@@ -37,6 +36,7 @@ counter.setReducer({
     ...currentState,
     count: currentState.count + payload,
   }),
+  [resetCounter.type]: () => counter.initialState,
 });
 
 const device = createSlice('device', {
@@ -44,24 +44,28 @@ const device = createSlice('device', {
   deep: { nested: 'value' },
 });
 
+const resetDevice = device.createAction('reset');
 const resume = device.createAction('resume');
 
 device.setReducer({
+  [resetDevice.type]: () => device.initialState,
   [resume.type]: (currentState) => ({
     ...currentState,
     isActive: true,
   }),
 });
 
+const NOT_SLICE_STATE = { not: 'slice' };
+
 const otherReducers = {
-  notSlice: () => ({ not: 'slice' }),
+  notSlice: () => NOT_SLICE_STATE,
 };
 
 const store = createStore(
   combineReducers({
     ...otherReducers,
-    [counter.name]: counter.reduce,
-    [device.name]: device.reduce,
+    [counter.name]: counter.reducer,
+    [device.name]: device.reducer,
   }),
   // combineSlices([counter, device], otherReducers),
   applyMiddleware(
@@ -80,20 +84,36 @@ const state = store.getState();
 
 // state.device.deep.nested = 'other';
 
-const sliceState = counter.getState(state);
+const sliceState = counter.getState();
 
 console.log({ state, sliceState });
 
 // const { not } = state.notSlice;
 
+let prevState = store.getState();
+
 store.subscribe(() => {
-  console.log('store updated', store.getState());
+  const nextState = store.getState();
+
+  if (nextState !== prevState) {
+    console.log('store updated', {
+      counter: nextState.counter !== prevState.counter,
+      device: nextState.device !== prevState.device,
+      notSlice: nextState.notSlice !== prevState.notSlice,
+    });
+  } else {
+    console.log('store not updated');
+  }
+
+  prevState = nextState;
 });
 
 store.dispatch(increment(2));
-store.dispatch(resetSlice());
+store.dispatch(resetCounter());
+store.dispatch(resetCounter());
 store.dispatch(resume());
-store.dispatch(device.reset());
+store.dispatch(resetDevice());
+store.dispatch(resetDevice());
 store.dispatch(increment());
 store.dispatch(decrement());
 store.dispatch(increment());
@@ -109,14 +129,14 @@ store.dispatch({ type: 'IGNORED' });
 store.dispatch(increment());
 
 const customReset =
-  (): ThunkAction<void, any, undefined, ReturnType<typeof resetSlice>> =>
+  (): ThunkAction<void, any, undefined, ReturnType<typeof resetCounter>> =>
   (dispatch, getState) => {
     console.log('customReset called');
 
     if (getCount(getState())) {
       console.log('resetting');
 
-      dispatch(resetSlice());
+      dispatch(resetCounter());
     }
   };
 

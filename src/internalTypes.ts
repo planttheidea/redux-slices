@@ -1,4 +1,4 @@
-import type { Tuple, Union } from 'ts-toolbelt';
+import type { Tuple } from 'ts-toolbelt';
 
 export type AnyState = { [key: string]: any };
 
