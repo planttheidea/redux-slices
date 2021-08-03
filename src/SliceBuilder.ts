@@ -108,12 +108,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     }
 
     // Set as frozen property to avoid accidental overwrites, but also prevent enumeration.
-    Object.defineProperty(actionCreator, 'type', {
-      configurable: false,
-      enumerable: false,
-      value: type,
-      writable: false,
-    });
+    Object.defineProperty(actionCreator, 'type', { value: type });
 
     return actionCreator as ActionCreator<
       typeof type,
