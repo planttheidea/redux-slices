@@ -15,9 +15,10 @@ import type {
 const slice = Array.prototype.slice;
 
 export default class SliceBuilder<Name extends string, State extends AnyState> {
-  private __h: Record<string, Reducer<State>> | null;
-  private __r: Reducer<State> | null;
-  private __s: State;
+  // We store the current state internally to allow short-circuiting with specific action type
+  // handlers. By default, all reducers are called when an action is dispatched, so in a case
+  // where an action our reducer ignores is dispatched we simply return the current state.
+  private __state: State;
 
   initialState: Readonly<State>;
   name: Name;
@@ -30,10 +31,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     this.createSelector = this.createSelector.bind(this);
     this.set = this.set.bind(this);
 
-    this.__h = null;
-    // Provide placeholder reducer for slices that don't have any handlers.
-    this.__r = () => initialState;
-    this.__s = initialState;
+    this.__state = initialState;
 
     this.initialState = initialState as Readonly<State>;
     this.name = name;
@@ -163,7 +161,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
       return <Action extends GeneralAction>(
         state: State = this.initialState,
         action: Action,
-      ) => (this.__s = handler(state, action));
+      ) => (this.__state = handler(state, action));
     }
 
     if (typeof handler === 'object') {
@@ -173,7 +171,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
       ) => {
         const updater = handler[action.type];
 
-        return updater ? (this.__s = updater(state, action)) : this.__s;
+        return updater ? (this.__state = updater(state, action)) : this.__state;
       };
     }
 
