@@ -29,5 +29,7 @@ export default class Slice<
     this.name = name;
     this.reducer = reducer;
     this.selectors = selectors || ({} as Selectors);
+
+    Object.freeze(this);
   }
 }
