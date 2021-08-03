@@ -5,6 +5,7 @@ import type {
   ActionCreator,
   AnyState,
   GeneralAction,
+  GeneralActionCreator,
   ParentState,
   Reducer,
   ReducerMap,
@@ -147,9 +148,9 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     return memoizedSelector;
   }
 
-  createReducer<
-    ActionMap extends Record<string, (...args: any[]) => GeneralAction>,
-  >(handler: Reducer<State, GeneralAction> | ReducerMap<State, ActionMap>) {
+  createReducer<ActionMap extends Record<string, GeneralActionCreator>>(
+    handler: Reducer<State, GeneralAction> | ReducerMap<State, ActionMap>,
+  ) {
     const initialState = this.initialState;
 
     if (typeof handler === 'function') {
@@ -202,7 +203,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
 
   set<
     ReducerHandler extends Reducer<State, GeneralAction>,
-    ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+    ActionCreators extends Record<string, GeneralActionCreator>,
     Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
   >({
     actionCreators,

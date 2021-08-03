@@ -47,6 +47,8 @@ export type GeneralAction = {
   type: string;
 };
 
+export type GeneralActionCreator = (...args: any[]) => GeneralAction;
+
 export type ParentState<SliceName extends string, State extends any> = Record<
   string,
   any
@@ -57,7 +59,7 @@ export type { Reducer };
 
 export type ReducerMap<
   State extends AnyState,
-  ActionMap extends Record<string, (...args: any) => GeneralAction>,
+  ActionMap extends Record<string, GeneralActionCreator>,
 > = {
   [Type in keyof ActionMap]: Reducer<State, ReturnType<ActionMap[Type]>>;
 };
@@ -73,7 +75,7 @@ export type SliceConfig<
   Name extends string,
   State extends AnyState,
   ReducerHandler extends Reducer<State, GeneralAction>,
-  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+  ActionCreators extends Record<string, GeneralActionCreator>,
   Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
 > = {
   name: Name;
@@ -86,7 +88,7 @@ export type SliceBuilderSetConfig<
   Name extends string,
   State extends AnyState,
   ReducerHandler extends Reducer<State, GeneralAction>,
-  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+  ActionCreators extends Record<string, GeneralActionCreator>,
   Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
 > = Omit<
   SliceConfig<Name, State, ReducerHandler, ActionCreators, Selectors>,
