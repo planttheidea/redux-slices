@@ -15,6 +15,7 @@ import type {
 const slice = Array.prototype.slice;
 
 export default class SliceBuilder<Name extends string, State extends AnyState> {
+  private __defaultReducer: Reducer<State, GeneralAction>;
   // We store the current state internally to allow short-circuiting with specific action type
   // handlers. By default, all reducers are called when an action is dispatched, so in a case
   // where an action our reducer ignores is dispatched we simply return the current state.
@@ -31,6 +32,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     this.createSelector = this.createSelector.bind(this);
     this.set = this.set.bind(this);
 
+    this.__defaultReducer = () => initialState;
     this.__state = initialState;
 
     this.initialState = initialState as Readonly<State>;
@@ -206,8 +208,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
   >({
     actionCreators,
-    // @ts-expect-error - default reducer which only returns initial state
-    reducer = () => this.initialState,
+    reducer,
     selectors,
   }: SliceBuilderSetConfig<
     Name,
@@ -219,7 +220,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     return new Slice<Name, State, ReducerHandler, ActionCreators, Selectors>({
       actionCreators,
       name: this.name,
-      reducer,
+      reducer: reducer || this.__defaultReducer,
       selectors,
     });
   }
