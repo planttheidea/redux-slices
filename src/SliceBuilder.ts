@@ -15,8 +15,8 @@ import type {
 const slice = Array.prototype.slice;
 
 export default class SliceBuilder<Name extends string, State extends AnyState> {
-  initialState: Readonly<State>;
-  name: Name;
+  readonly initialState: Readonly<State>;
+  readonly name: Name;
 
   constructor(name: Name, initialState: State = {} as State) {
     // Bind all methods to the instance to ensure destructured use works as expected.
