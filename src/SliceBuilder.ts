@@ -150,35 +150,29 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
   createReducer<
     ActionMap extends Record<string, (...args: any[]) => GeneralAction>,
   >(handler: Reducer<State, GeneralAction> | ReducerMap<State, ActionMap>) {
+    const initialState = this.initialState;
+
     if (typeof handler === 'function') {
-      return (
-        (reducer: Reducer<State, GeneralAction>, initialState: State) =>
-        <Action extends GeneralAction>(state: State, action: Action) =>
-          reducer(state || initialState, action)
-      )(handler, this.initialState);
+      return <Action extends GeneralAction>(state: State, action: Action) =>
+        handler(state || initialState, action);
     }
 
     if (typeof handler === 'object') {
-      return ((
-        actionTypeMap: ReducerMap<State, ActionMap>,
-        initialState: State,
+      // We store the current state internally to allow short-circuiting with specific action type
+      // handlers. By default, all reducers are called when an action is dispatched, so in a case
+      // where an action our reducer ignores is dispatched we simply return the current state.
+      let currentState: State = initialState;
+
+      return <Action extends ReturnType<ActionMap[string]>>(
+        state: State,
+        action: Action,
       ) => {
-        // We store the current state internally to allow short-circuiting with specific action type
-        // handlers. By default, all reducers are called when an action is dispatched, so in a case
-        // where an action our reducer ignores is dispatched we simply return the current state.
-        let currentState: State = initialState;
+        const updater = handler[action.type];
 
-        return <Action extends ReturnType<ActionMap[string]>>(
-          state: State,
-          action: Action,
-        ) => {
-          const updater = actionTypeMap[action.type];
-
-          return updater
-            ? (currentState = updater(state || initialState, action))
-            : currentState;
-        };
-      })(handler, this.initialState);
+        return updater
+          ? (currentState = updater(state || initialState, action))
+          : currentState;
+      };
     }
 
     throw new Error(
