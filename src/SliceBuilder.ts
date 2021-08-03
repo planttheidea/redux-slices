@@ -124,15 +124,12 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
       // Leveraging `slice.call(arguments)` to avoid inline for loop.
       const remainingArgs = slice.call(arguments, 1) as Args;
       const nextState = state[name];
-      const remainingArgsSize = remainingArgs.length;
+      const size = remainingArgs.length;
 
-      let shouldUpdate =
-        !prevState ||
-        prevState !== nextState ||
-        remainingArgsSize !== prevArgs.length;
+      let shouldUpdate = prevState !== nextState || size !== prevArgs.length;
 
       if (!shouldUpdate) {
-        for (let index = 0; index < remainingArgsSize; ++index) {
+        for (let index = 0; index < size; ++index) {
           if (!isEqual(remainingArgs[index], prevArgs[index])) {
             shouldUpdate = true;
             break;
