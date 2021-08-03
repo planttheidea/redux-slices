@@ -84,6 +84,12 @@ export type SliceConfig<
   selectors?: Selectors;
 };
 
+export type SliceSelector<
+  State extends AnyState,
+  Args extends unknown[],
+  Result extends any,
+> = (state: State, ...remainingArgs: Args) => Result;
+
 export type SliceBuilderSetConfig<
   Name extends string,
   State extends AnyState,

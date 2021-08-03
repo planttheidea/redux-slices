@@ -10,6 +10,7 @@ import type {
   ReducerMap,
   Selector,
   SliceBuilderSetConfig,
+  SliceSelector,
 } from './internalTypes';
 
 const slice = Array.prototype.slice;
@@ -129,26 +130,28 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
    * @returns - result of calling the selector
    */
   createMemoizedSelector<Args extends unknown[], Result extends any>(
-    selector: (state: State, ...args: Args) => Result,
+    selector: SliceSelector<State, Args, Result>,
     isEqual = isStrictlyEqual,
   ) {
+    type CompleteArgs = [State, ...Args];
+
     const name = this.name;
 
-    let prevState: State;
-    let prevArgs = [] as unknown as Args;
+    let prevArgs = [] as unknown as CompleteArgs;
     let prevResult: Result;
 
     return function (state: ParentState<Name, State>) {
       // Leveraging `slice.call(arguments)` to avoid inline for loop.
-      const remainingArgs = slice.call(arguments, 1) as Args;
-      const nextState = state[name];
-      const size = remainingArgs.length;
+      const args = slice.call(arguments, 0) as CompleteArgs;
+      const size = args.length;
 
-      let shouldUpdate = prevState !== nextState || size !== prevArgs.length;
+      args[0] = state[name];
+
+      let shouldUpdate = size !== prevArgs.length;
 
       if (!shouldUpdate) {
         for (let index = 0; index < size; ++index) {
-          if (!isEqual(remainingArgs[index], prevArgs[index])) {
+          if (!isEqual(args[index], prevArgs[index])) {
             shouldUpdate = true;
             break;
           }
@@ -156,9 +159,8 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
       }
 
       if (shouldUpdate) {
-        prevState = nextState;
-        prevArgs = remainingArgs;
-        prevResult = selector(nextState, ...remainingArgs);
+        prevArgs = args;
+        prevResult = selector.apply(null, args);
       }
 
       return prevResult;
@@ -205,16 +207,20 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
    * @returns - result of calling the selector
    */
   createSelector<Args extends unknown[], Result extends any>(
-    selector: (state: State, ...remainingArgs: Args) => Result,
+    selector: SliceSelector<State, Args, Result>,
   ) {
+    type CompleteArgs = [State, ...Args];
+
     const name = this.name;
 
     // Simple wrapper that selects from the specific slice of state.
     return function (state: ParentState<Name, State>) {
       // Leveraging `slice.call(arguments)` to avoid inline for loop.
-      const remainingArgs = slice.call(arguments, 1) as Args;
+      const args = slice.call(arguments, 0) as CompleteArgs;
 
-      return selector(state[name], ...remainingArgs);
+      args[0] = state[name];
+
+      return selector.apply(null, args);
     } as unknown as Selector<Name, State, Args, Result>;
   }
 
