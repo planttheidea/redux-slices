@@ -1,4 +1,4 @@
-import { createSliceBuilder } from '../../src';
+import { createSlice } from '../../src';
 import deviceSlice from './device';
 
 const {
@@ -16,7 +16,7 @@ const {
   createMemoizedSelector,
   createSelector,
   set,
-} = createSliceBuilder('counter', INITIAL_STATE);
+} = createSlice('counter', INITIAL_STATE);
 
 const increment = createAction('increment', (number?: number) => number);
 const decrement = createAction('decrement');

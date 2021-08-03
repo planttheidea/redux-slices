@@ -1,5 +1,4 @@
 import Slice from './Slice';
-import { applyErrorToAction, isStrictlyEqual } from './utils';
 
 import type {
   ActionCreator,
@@ -14,6 +13,25 @@ import type {
 } from './internalTypes';
 
 const slice = Array.prototype.slice;
+
+function applyErrorToAction(action: GeneralAction) {
+  if (action.payload instanceof Error) {
+    action.error = true;
+  }
+
+  return action;
+}
+
+/**
+ * Are the two values passed strictly equal to one another.
+ *
+ * @param a - the first value to compare
+ * @param b - the second value to compare
+ * @returns - are the values passed strictly equal
+ */
+function isStrictlyEqual(a: any, b: any) {
+  return a === b;
+}
 
 export default class SliceBuilder<Name extends string, State extends AnyState> {
   readonly initialState: Readonly<State>;

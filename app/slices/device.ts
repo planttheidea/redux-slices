@@ -1,6 +1,6 @@
-import { createSliceBuilder } from '../../src';
+import { createSlice } from '../../src';
 
-const deviceSlice = createSliceBuilder('device', {
+const deviceSlice = createSlice('device', {
   isActive: false,
   deep: { nested: 'value' },
 });
