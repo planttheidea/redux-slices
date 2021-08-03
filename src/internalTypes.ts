@@ -69,18 +69,6 @@ export type Selector<
   Result extends any,
 > = (state: ParentState<Name, State>, ...remainingArgs: Args) => Result;
 
-export type SliceBuilderSetConfig<
-  Name extends string,
-  State extends AnyState,
-  ReducerHandler extends Reducer<State, GeneralAction>,
-  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
-  Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
-> = {
-  actionCreators?: ActionCreators;
-  reducer?: ReducerHandler;
-  selectors?: Selectors;
-};
-
 export type SliceConfig<
   Name extends string,
   State extends AnyState,
@@ -93,3 +81,14 @@ export type SliceConfig<
   actionCreators?: ActionCreators;
   selectors?: Selectors;
 };
+
+export type SliceBuilderSetConfig<
+  Name extends string,
+  State extends AnyState,
+  ReducerHandler extends Reducer<State, GeneralAction>,
+  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+  Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
+> = Omit<
+  SliceConfig<Name, State, ReducerHandler, ActionCreators, Selectors>,
+  'name'
+>;
