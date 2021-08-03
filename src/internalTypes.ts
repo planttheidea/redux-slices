@@ -1,3 +1,4 @@
+import type { Reducer } from 'redux';
 import type { Tuple } from 'ts-toolbelt';
 
 export type AnyState = { [key: string]: any };
@@ -39,12 +40,12 @@ export type ActionCreator<
     ) => FluxStandardAction<Type, undefined, ReturnType<MetaCreator>>
   : () => FluxStandardAction<Type, undefined, undefined>;
 
-export type GeneralAction = Partial<{
-  error: true;
-  meta: any;
-  payload: any;
+export type GeneralAction = {
+  error?: true;
+  meta?: any;
+  payload?: any;
   type: string;
-}>;
+};
 
 export type ParentState<SliceName extends string, State extends any> = Record<
   string,
@@ -52,12 +53,7 @@ export type ParentState<SliceName extends string, State extends any> = Record<
 > &
   { [Key in SliceName]: State };
 
-export type Reducer<State extends AnyState, Action extends any = any> = ((
-  state: State,
-  action: Action,
-) => State) & {
-  __keys?: string[];
-};
+export type { Reducer };
 
 export type ReducerMap<
   State extends AnyState,
@@ -72,3 +68,28 @@ export type Selector<
   Args extends unknown[],
   Result extends any,
 > = (state: ParentState<Name, State>, ...remainingArgs: Args) => Result;
+
+export type SliceBuilderSetConfig<
+  Name extends string,
+  State extends AnyState,
+  ReducerHandler extends Reducer<State, GeneralAction>,
+  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+  Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
+> = {
+  actionCreators?: ActionCreators;
+  reducer?: ReducerHandler;
+  selectors?: Selectors;
+};
+
+export type SliceConfig<
+  Name extends string,
+  State extends AnyState,
+  ReducerHandler extends Reducer<State, GeneralAction>,
+  ActionCreators extends Record<string, (...args: any[]) => GeneralAction>,
+  Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
+> = {
+  name: Name;
+  reducer: ReducerHandler;
+  actionCreators?: ActionCreators;
+  selectors?: Selectors;
+};

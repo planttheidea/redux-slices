@@ -1,63 +1,9 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
-// import { createSelector } from 'reselect';
-import { createSlice } from '../src';
+import counter from './slices/counter';
+import device from './slices/device';
 
 import type { ThunkAction } from 'redux-thunk';
-
-const counter = createSlice('counter', {
-  count: 0,
-  deep: { nested: 'object' },
-});
-
-const increment = counter.createAction(
-  'increment',
-  (number?: number) => number,
-);
-const decrement = counter.createAction('decrement');
-const resetCounter = counter.createAction('reset', () => counter.initialState);
-const sendError = counter.createAction('error', () => new Error('boom'));
-
-const getCount = counter.createSelector((state) => state.count);
-const getDoubledCount = counter.createMemoizedSelector(({ count }) => {
-  console.log('Setting doubled count cache');
-
-  return count * 2;
-});
-
-type ActionMap = {
-  [decrement.type]: typeof decrement;
-  [increment.type]: typeof increment;
-  [resetCounter.type]: typeof resetCounter;
-};
-
-counter.setReducer<ActionMap>({
-  [decrement.type]: (currentState) => ({
-    ...currentState,
-    count: currentState.count - 1,
-  }),
-  [increment.type]: (currentState, { payload = 1 }) => ({
-    ...currentState,
-    count: currentState.count + payload,
-  }),
-  [resetCounter.type]: () => counter.initialState,
-});
-
-const device = createSlice('device', {
-  isActive: false,
-  deep: { nested: 'value' },
-});
-
-const resetDevice = device.createAction('reset');
-const resume = device.createAction('resume');
-
-device.setReducer({
-  [resetDevice.type]: () => device.initialState,
-  [resume.type]: (currentState) => ({
-    ...currentState,
-    isActive: true,
-  }),
-});
 
 const NOT_SLICE_STATE = { not: 'slice' };
 
@@ -103,6 +49,14 @@ store.subscribe(() => {
 
   prevState = nextState;
 });
+
+const {
+  actionCreators: { decrement, increment, reset: resetCounter, sendError },
+  selectors: { getDoubledCount, getCount },
+} = counter;
+const {
+  actionCreators: { resume, reset: resetDevice },
+} = device;
 
 store.dispatch(increment(2));
 store.dispatch(resetCounter());

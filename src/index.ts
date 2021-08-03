@@ -1,4 +1,4 @@
-import Slice from './Slice';
+import SliceBuilder from './SliceBuilder';
 
 import type { AnyState } from './internalTypes';
 
@@ -7,9 +7,12 @@ import type { AnyState } from './internalTypes';
  *
  * @param name - name of the slice
  * @param initialState - initial state of the slice
- * @returns - Slice instance
+ * @returns - SliceBuilder instance
  */
-export const createSlice = <Name extends string, InitialState extends AnyState>(
+export const createSliceBuilder = <
+  Name extends string,
+  InitialState extends AnyState,
+>(
   name: Name,
   initialState: InitialState,
-) => new Slice(name, initialState);
+) => new SliceBuilder(name, initialState);
