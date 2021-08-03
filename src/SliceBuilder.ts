@@ -1,5 +1,5 @@
 import Slice from './Slice';
-import { applyErrorToAction, isStrictlyEqual, some } from './utils';
+import { applyErrorToAction, isStrictlyEqual } from './utils';
 
 import type {
   ActionCreator,
@@ -120,32 +120,34 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     let prevArgs = [] as unknown as Args;
     let prevResult: Result;
 
-    const memoizedSelector = function (state: ParentState<Name, State>) {
+    return function (state: ParentState<Name, State>) {
       // Leveraging `slice.call(arguments)` to avoid inline for loop.
       const remainingArgs = slice.call(arguments, 1) as Args;
       const nextState = state[name];
+      const remainingArgsSize = remainingArgs.length;
 
-      if (
+      let shouldUpdate =
         !prevState ||
         prevState !== nextState ||
-        remainingArgs.length !== prevArgs.length ||
-        some(remainingArgs, (arg, index) => isEqual(prevArgs[index], arg))
-      ) {
+        remainingArgsSize !== prevArgs.length;
+
+      if (!shouldUpdate) {
+        for (let index = 0; index < remainingArgsSize; ++index) {
+          if (!isEqual(remainingArgs[index], prevArgs[index])) {
+            shouldUpdate = true;
+            break;
+          }
+        }
+      }
+
+      if (shouldUpdate) {
         prevState = nextState;
         prevArgs = remainingArgs;
         prevResult = selector(nextState, ...remainingArgs);
       }
 
       return prevResult;
-    } as unknown as Selector<Name, State, Args, Result> & { clear: () => void };
-
-    memoizedSelector.clear = () => {
-      prevState = undefined as unknown as State;
-      prevArgs = [] as unknown as Args;
-      prevResult = undefined as unknown as Result;
-    };
-
-    return memoizedSelector;
+    } as unknown as Selector<Name, State, Args, Result>;
   }
 
   createReducer<ActionMap extends Record<string, GeneralActionCreator>>(

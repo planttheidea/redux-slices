@@ -40,23 +40,3 @@ export const applyErrorToAction = (action: GeneralAction) => {
  * @returns - are the values passed strictly equal
  */
 export const isStrictlyEqual = (a: any, b: any) => a === b;
-
-/**
- * Does a value in the array match the given predicate.
- *
- * @param array - array of values to test
- * @param predicate - method to test, where a truthy value returned denotes a match
- * @returns - whether a value in the array matches the predicate
- */
-export const some = (
-  array: any[],
-  predicate: (value: any, index: number) => any,
-) => {
-  for (let index = 0, length = array.length; index < length; ++index) {
-    if (predicate(array[index], index)) {
-      return true;
-    }
-  }
-
-  return false;
-};
