@@ -38,11 +38,18 @@ store.subscribe(() => {
   const nextState = store.getState();
 
   if (nextState !== prevState) {
-    console.log('store updated', {
-      counter: nextState.counter !== prevState.counter,
-      device: nextState.device !== prevState.device,
-      notSlice: nextState.notSlice !== prevState.notSlice,
-    });
+    const updateResults = Object.keys(nextState).reduce((results, key) => {
+      if (nextState[key] !== prevState[key]) {
+        results[key] = {
+          prev: prevState[key],
+          next: nextState[key],
+        };
+      }
+
+      return results;
+    }, {});
+
+    console.log('store updated', updateResults);
   } else {
     console.log('store not updated');
   }
@@ -62,6 +69,7 @@ store.dispatch(increment(2));
 store.dispatch(resetCounter());
 store.dispatch(resetCounter());
 store.dispatch(sendError());
+store.dispatch(increment(50));
 store.dispatch(resume());
 store.dispatch(resetDevice());
 store.dispatch(resetDevice());

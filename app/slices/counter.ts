@@ -1,4 +1,9 @@
 import { createSliceBuilder } from '../../src';
+import deviceSlice from './device';
+
+const {
+  actionCreators: { resume: resumeDevice },
+} = deviceSlice;
 
 const INITIAL_STATE = {
   count: 0,
@@ -29,6 +34,7 @@ type ActionMap = {
   [decrement.type]: typeof decrement;
   [increment.type]: typeof increment;
   [reset.type]: typeof reset;
+  [resumeDevice.type]: typeof resumeDevice;
 };
 
 const reducer = createReducer<ActionMap>({
@@ -41,6 +47,8 @@ const reducer = createReducer<ActionMap>({
     count: currentState.count + payload,
   }),
   [reset.type]: () => INITIAL_STATE,
+  // other actions
+  [resumeDevice.type]: () => INITIAL_STATE,
 });
 
 export default set({

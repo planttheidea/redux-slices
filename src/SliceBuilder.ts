@@ -15,11 +15,6 @@ import type {
 const slice = Array.prototype.slice;
 
 export default class SliceBuilder<Name extends string, State extends AnyState> {
-  // We store the current state internally to allow short-circuiting with specific action type
-  // handlers. By default, all reducers are called when an action is dispatched, so in a case
-  // where an action our reducer ignores is dispatched we simply return the current state.
-  private __state: State;
-
   initialState: Readonly<State>;
   name: Name;
 
@@ -30,8 +25,6 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     this.createReducer = this.createReducer.bind(this);
     this.createSelector = this.createSelector.bind(this);
     this.set = this.set.bind(this);
-
-    this.__state = initialState;
 
     this.initialState = initialState as Readonly<State>;
     this.name = name;
@@ -156,23 +149,36 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
 
   createReducer<
     ActionMap extends Record<string, (...args: any[]) => GeneralAction>,
-  >(handler: Reducer<State> | ReducerMap<State, ActionMap>) {
+  >(handler: Reducer<State, GeneralAction> | ReducerMap<State, ActionMap>) {
     if (typeof handler === 'function') {
-      return <Action extends GeneralAction>(
-        state: State = this.initialState,
-        action: Action,
-      ) => (this.__state = handler(state, action));
+      return (
+        (reducer: Reducer<State, GeneralAction>, initialState: State) =>
+        <Action extends GeneralAction>(state: State, action: Action) =>
+          reducer(state || initialState, action)
+      )(handler, this.initialState);
     }
 
     if (typeof handler === 'object') {
-      return <Action extends ReturnType<ActionMap[string]>>(
-        state: State = this.initialState,
-        action: Action,
+      return ((
+        actionTypeMap: ReducerMap<State, ActionMap>,
+        initialState: State,
       ) => {
-        const updater = handler[action.type];
+        // We store the current state internally to allow short-circuiting with specific action type
+        // handlers. By default, all reducers are called when an action is dispatched, so in a case
+        // where an action our reducer ignores is dispatched we simply return the current state.
+        let currentState: State = initialState;
 
-        return updater ? (this.__state = updater(state, action)) : this.__state;
-      };
+        return <Action extends ReturnType<ActionMap[string]>>(
+          state: State,
+          action: Action,
+        ) => {
+          const updater = actionTypeMap[action.type];
+
+          return updater
+            ? (currentState = updater(state || initialState, action))
+            : currentState;
+        };
+      })(handler, this.initialState);
     }
 
     throw new Error(
