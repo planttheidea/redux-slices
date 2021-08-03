@@ -233,12 +233,11 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     ActionCreators,
     Selectors
   >) {
-    const name = this.name;
     const initialState = this.initialState;
 
     return new Slice<Name, State, ReducerHandler, ActionCreators, Selectors>({
       actionCreators,
-      name,
+      name: this.name,
       reducer: reducer || (() => initialState),
       selectors,
     });
