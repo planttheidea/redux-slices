@@ -21,7 +21,7 @@ const config = {
 
   devtool: 'source-map',
 
-  entry: [path.resolve(__dirname, 'app', 'index.ts')],
+  entry: [path.resolve(__dirname, 'app', 'index.tsx')],
 
   mode: 'development',
 
@@ -35,6 +35,7 @@ const config = {
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
+          presets: ['@babel/preset-react'],
         },
         test: /\.(ts|tsx)$/,
       },
