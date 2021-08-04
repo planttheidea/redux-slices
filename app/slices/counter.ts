@@ -1,4 +1,4 @@
-import { createSlice } from '../../src';
+import { createSliceBuilder } from '../../src';
 import deviceSlice from './device';
 
 const {
@@ -15,8 +15,8 @@ const {
   createReducer,
   createMemoizedSelector,
   createSelector,
-  set,
-} = createSlice('counter', INITIAL_STATE);
+  createSlice,
+} = createSliceBuilder('counter', INITIAL_STATE);
 
 const increment = createAction('increment', (number?: number) => number);
 const decrement = createAction('decrement');
@@ -51,7 +51,7 @@ const reducer = createReducer<ActionMap>({
   [resumeDevice.type]: () => INITIAL_STATE,
 });
 
-export default set({
+export default createSlice({
   actionCreators: {
     decrement,
     increment,

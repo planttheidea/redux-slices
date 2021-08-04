@@ -1,17 +1,17 @@
-import { createSlice } from '../../src';
+import { createSliceBuilder } from '../../src';
 
-const deviceSlice = createSlice('device', {
+const sliceBuilder = createSliceBuilder('device', {
   isActive: false,
   deep: { nested: 'value' },
 });
 
-const reset = deviceSlice.createAction('reset');
-const resume = deviceSlice.createAction('resume');
+const reset = sliceBuilder.createAction('reset');
+const resume = sliceBuilder.createAction('resume');
 
-const reducer = deviceSlice.createReducer((state, action) => {
+const reducer = sliceBuilder.createReducer((state, action) => {
   switch (action.type) {
     case reset.type:
-      return deviceSlice.initialState;
+      return sliceBuilder.initialState;
 
     case resume.type:
       return state.isActive ? state : { ...state, isActive: true };
@@ -21,7 +21,7 @@ const reducer = deviceSlice.createReducer((state, action) => {
   }
 });
 
-export default deviceSlice.set({
+export default sliceBuilder.createSlice({
   actionCreators: { reset, resume },
   reducer,
 });

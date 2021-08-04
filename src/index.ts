@@ -9,7 +9,10 @@ import type { AnyState } from './internalTypes';
  * @param initialState - initial state of the slice
  * @returns - SliceBuilder instance
  */
-export const createSlice = <Name extends string, InitialState extends AnyState>(
+export const createSliceBuilder = <
+  Name extends string,
+  InitialState extends AnyState,
+>(
   name: Name,
   initialState: InitialState,
 ) => new SliceBuilder(name, initialState);

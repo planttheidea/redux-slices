@@ -44,7 +44,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     this.createMemoizedSelector = this.createMemoizedSelector.bind(this);
     this.createReducer = this.createReducer.bind(this);
     this.createSelector = this.createSelector.bind(this);
-    this.set = this.set.bind(this);
+    this.createSlice = this.createSlice.bind(this);
 
     this.initialState = initialState as Readonly<State>;
     this.name = name;
@@ -219,7 +219,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     } as unknown as Selector<Name, State, Args, Result>;
   }
 
-  set<
+  createSlice<
     ReducerHandler extends Reducer<State, GeneralAction>,
     ActionCreators extends Record<string, GeneralActionCreator>,
     Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
