@@ -176,26 +176,19 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
 
     if (typeof handler === 'function') {
       return <Action extends GeneralAction>(
-        state: State | undefined,
+        state: State = initialState,
         action: Action,
-      ) => handler(state || initialState, action);
+      ) => handler(state, action);
     }
 
     if (typeof handler === 'object' && handler !== null) {
-      // We store the current state internally to allow short-circuiting with specific action type
-      // handlers. By default, all reducers are called when an action is dispatched, so in a case
-      // where an action our reducer ignores is dispatched we simply return the current state.
-      let currentState: State = initialState;
-
       return <Action extends ReturnType<ActionMap[string]>>(
-        state: State | undefined,
+        state: State = initialState,
         action: Action,
       ) => {
         const updater = handler[action.type];
 
-        return updater
-          ? (currentState = updater(state || initialState, action))
-          : currentState;
+        return updater ? updater(state, action) : state;
       };
     }
 
