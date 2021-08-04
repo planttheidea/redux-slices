@@ -33,6 +33,10 @@
     "webpack-cli": "4.7.2",
     "webpack-dev-server": "3.11.2"
   },
+  "files": [
+    "dist/*",
+    "index.d.ts"
+  ],
   "homepage": "https://github.com/planttheidea/redux-slices#readme",
   "keywords": [
     "redux",
@@ -43,6 +47,9 @@
   "main": "dist/redux-slices.cjs.js",
   "module": "dist/redux-slices.esm.js",
   "name": "redux-slices",
+  "peerDependencies": {
+    "redux": "^3.0.0 || ^4.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/planttheidea/redux-slices.git"
