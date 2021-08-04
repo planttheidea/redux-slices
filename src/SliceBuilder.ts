@@ -39,6 +39,12 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
   readonly name: Name;
 
   constructor(name: Name, initialState: State = {} as State) {
+    if (typeof name !== 'string') {
+      throw new TypeError(
+        `Name provided to \`SliceBuilder\` must be a string; received ${typeof name}.`,
+      );
+    }
+
     // Bind all methods to the instance to ensure destructured use works as expected.
     this.createAction = this.createAction.bind(this);
     this.createMemoizedSelector = this.createMemoizedSelector.bind(this);
@@ -81,8 +87,8 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
       if (typeof getMeta === 'function') {
         actionCreator = function () {
           return applyErrorToAction({
-            payload: getPayload.apply(null, arguments),
             meta: getMeta.apply(null, arguments),
+            payload: getPayload.apply(null, arguments),
             type,
           });
         };
@@ -168,18 +174,20 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     const initialState = this.initialState;
 
     if (typeof handler === 'function') {
-      return <Action extends GeneralAction>(state: State, action: Action) =>
-        handler(state || initialState, action);
+      return <Action extends GeneralAction>(
+        state: State | undefined,
+        action: Action,
+      ) => handler(state || initialState, action);
     }
 
-    if (typeof handler === 'object') {
+    if (typeof handler === 'object' && handler !== null) {
       // We store the current state internally to allow short-circuiting with specific action type
       // handlers. By default, all reducers are called when an action is dispatched, so in a case
       // where an action our reducer ignores is dispatched we simply return the current state.
       let currentState: State = initialState;
 
       return <Action extends ReturnType<ActionMap[string]>>(
-        state: State,
+        state: State | undefined,
         action: Action,
       ) => {
         const updater = handler[action.type];
@@ -191,7 +199,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     }
 
     throw new Error(
-      `Handlers passed to \`SliceBuilder<${this.name}>.setReducer\` must be either a reducer function or an object of reducers that handle specific action types.`,
+      `Handlers passed to \`SliceBuilder<${this.name}>.setReducer\` must be either a reducer function or an object of action-specific reducers.`,
     );
   }
 

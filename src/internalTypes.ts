@@ -1,4 +1,3 @@
-import type { Reducer } from 'redux';
 import type { Tuple } from 'ts-toolbelt';
 
 export type AnyState = { [key: string]: any };
@@ -55,7 +54,10 @@ export type ParentState<SliceName extends string, State extends any> = Record<
 > &
   { [Key in SliceName]: State };
 
-export type { Reducer };
+export type Reducer<State extends AnyState, Action extends GeneralAction> = (
+  state: State,
+  action: Action,
+) => State;
 
 export type ReducerMap<
   State extends AnyState,
@@ -98,5 +100,5 @@ export type SliceBuilderSetConfig<
   Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
 > = Omit<
   SliceConfig<Name, State, ReducerHandler, ActionCreators, Selectors>,
-  'name'
->;
+  'name' | 'reducer'
+> & { reducer?: ReducerHandler };
