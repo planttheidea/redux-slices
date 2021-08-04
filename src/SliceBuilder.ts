@@ -8,6 +8,7 @@ import type {
   ParentState,
   Reducer,
   ReducerMap,
+  ReduxReducer,
   Selector,
   SliceBuilderSetConfig,
   SliceSelector,
@@ -228,7 +229,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
   }
 
   createSlice<
-    ReducerHandler extends Reducer<State, GeneralAction>,
+    ReducerHandler extends ReduxReducer<State, GeneralAction>,
     ActionCreators extends Record<string, GeneralActionCreator>,
     Selectors extends Record<string, Selector<Name, State, unknown[], any>>,
   >({

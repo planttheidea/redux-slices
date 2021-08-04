@@ -435,34 +435,6 @@ describe('redux-slices/src/SliceBuilder', () => {
       expect(result.reducer()).toBe(INITIAL_STATE);
     });
 
-    it('should contain all stored properties', () => {
-      const action = sliceBuilder.createAction('action');
-      const reducer = sliceBuilder.createReducer((state) => state);
-      const selector = sliceBuilder.createSelector((state) => state.items);
-
-      const result = sliceBuilder.createSlice({
-        actionCreators: { action },
-        reducer,
-        selectors: { selector },
-      });
-
-      expect(result.actionCreators).toEqual({ action });
-      expect(result.reducer).toBe(reducer);
-      expect(result.selectors).toEqual({ selector });
-    });
-
-    it('should contain defaults for "empty" properties', () => {
-      const reducer = sliceBuilder.createReducer((state) => state);
-
-      const result = sliceBuilder.createSlice({
-        reducer,
-      });
-
-      expect(result.actionCreators).toEqual({});
-      expect(result.reducer).toBe(reducer);
-      expect(result.selectors).toEqual({});
-    });
-
     it('should be callable outside the context of the slice', () => {
       const { createSlice } = sliceBuilder;
 
