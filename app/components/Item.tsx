@@ -26,6 +26,8 @@ type ValueProps = {
 const Value = styled.span`
   display: block;
   flex-grow: 1;
+  font-style: ${(props: ValueProps) =>
+    props.isComplete ? 'italic' : 'normal'};
   text-decoration: ${(props: ValueProps) =>
     props.isComplete ? 'line-through' : 'none'};
 `;

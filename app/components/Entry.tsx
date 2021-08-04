@@ -5,7 +5,7 @@ import Button from './Button';
 import { DARK_GRAY, LIGHT_GRAY, WHITE } from '../styles';
 import { todos } from '../store';
 
-import type { MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent } from 'react';
 
 const {
   actionCreators: { addTodo, clearTodos },
@@ -40,6 +40,14 @@ function clearAndFocus(input: HTMLInputElement) {
   input.focus();
 }
 
+function submit(
+  dispatch: ReturnType<typeof useDispatch>,
+  input: HTMLInputElement,
+) {
+  dispatch(addTodo(input.value));
+  clearAndFocus(input);
+}
+
 export default function Entry() {
   const inputRef = useRef(null);
 
@@ -48,8 +56,7 @@ export default function Entry() {
     (event: MouseEvent) => {
       event.preventDefault();
 
-      dispatch(addTodo(inputRef.current.value));
-      clearAndFocus(inputRef.current);
+      submit(dispatch, inputRef.current);
     },
     [inputRef],
   );
@@ -59,12 +66,22 @@ export default function Entry() {
     dispatch(clearTodos());
     clearAndFocus(inputRef.current);
   }, []);
+  const onKeyDownSubmit = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+
+        submit(dispatch, inputRef.current);
+      }
+    },
+    [inputRef],
+  );
 
   const items = useSelector(getItems);
 
   return (
     <Container>
-      <Input autoFocus ref={inputRef} />
+      <Input autoFocus onKeyDown={onKeyDownSubmit} ref={inputRef} />
       <Button onClick={onClickAdd} type="submit">
         Add
       </Button>
