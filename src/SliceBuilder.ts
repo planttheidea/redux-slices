@@ -247,7 +247,7 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
     return new Slice<Name, State, ReducerHandler, ActionCreators, Selectors>({
       actionCreators,
       name: this.name,
-      reducer: reducer || (() => initialState),
+      reducer: reducer || ((() => initialState) as unknown as ReducerHandler),
       selectors,
     });
   }
