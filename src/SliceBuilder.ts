@@ -27,9 +27,9 @@ function applyErrorToAction(action: GeneralAction) {
 /**
  * Are the two values passed strictly equal to one another.
  *
- * @param a - the first value to compare
- * @param b - the second value to compare
- * @returns - are the values passed strictly equal
+ * @param a the first value to compare
+ * @param b the second value to compare
+ * @returns are the values passed strictly equal
  */
 function isStrictlyEqual(a: any, b: any) {
   return a === b;
@@ -66,10 +66,10 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
    *
    * The `type` passed is automatically namespaced based on the slice name.
    *
-   * @param unscopedType - action type
-   * @param getPayload - optional handler to get the value used for the `payload` property
-   * @param getMeta - optional handler to get the value used for the `meta` property`
-   * @returns - action creator, specific to the payload and meta expected
+   * @param unscopedType action type
+   * @param getPayload optional handler to get the value used for the `payload` property
+   * @param getMeta optional handler to get the value used for the `meta` property`
+   * @returns action creator, specific to the payload and meta expected
    */
   createAction<Type extends string, PayloadCreator, MetaCreator>(
     unscopedType: Type,
@@ -127,9 +127,9 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
   /**
    * Create a selector specific to the slice state that is memoized based on the arguments passed.
    *
-   * @param selector - slice-specific selector function
-   * @param isEqual - method to determine equality of arguments passed to the selector
-   * @returns - result of calling the selector
+   * @param selector slice-specific selector function
+   * @param isEqual method to determine equality of arguments passed to the selector
+   * @returns result of calling the selector
    */
   createMemoizedSelector<Args extends unknown[], Result extends any>(
     selector: SliceSelector<State, Args, Result>,
@@ -200,8 +200,8 @@ export default class SliceBuilder<Name extends string, State extends AnyState> {
   /**
    * Create a selector that is specific to the slice state.
    *
-   * @param selector - slice-specific selector function
-   * @returns - result of calling the selector
+   * @param selector slice-specific selector function
+   * @returns result of calling the selector
    */
   createSelector<Args extends unknown[], Result extends any>(
     selector: SliceSelector<State, Args, Result>,
