@@ -41,6 +41,7 @@
   },
   "files": [
     "dist/*",
+    "src/*",
     "index.d.ts"
   ],
   "homepage": "https://github.com/planttheidea/redux-slices#readme",
