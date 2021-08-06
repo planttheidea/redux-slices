@@ -1,4 +1,6 @@
 import Slice from '../src/Slice';
+import copy from 'fast-copy';
+import { deepEqual } from 'fast-equals';
 
 const INITIAL_STATE = {
   items: [
@@ -188,6 +190,28 @@ describe('redux-slices/src/Slice', () => {
       expect(items2).toBe(items);
     });
 
+    it('should create a selector that does not re-compute the value if state is unchanged based on custom equality checks', () => {
+      const result = sliceBuilder.createMemoizedSelector(
+        (state) => state.items.filter(({ id }) => id % 2 === 0),
+        deepEqual,
+      );
+
+      const mockCompleteState = {
+        [sliceBuilder.name]: INITIAL_STATE,
+      };
+
+      const items = result(mockCompleteState);
+
+      expect(items).toEqual([INITIAL_STATE.items[1]]);
+
+      // Deep copy of state
+      const mockUpdatedCompleteState = copy(mockCompleteState);
+
+      const items2 = result(mockUpdatedCompleteState);
+
+      expect(items2).toBe(items);
+    });
+
     it('should create a selector thats re-computes the value if state changes', () => {
       const result = sliceBuilder.createMemoizedSelector((state) =>
         state.items.filter(({ id }) => id % 2 === 0),
@@ -206,6 +230,7 @@ describe('redux-slices/src/Slice', () => {
       expect(items2).toBe(items);
 
       const newItems = [...INITIAL_STATE.items, { id: 4, started: false }];
+
       const mockUpdatedCompleteState = {
         [sliceBuilder.name]: {
           ...INITIAL_STATE,
@@ -234,6 +259,29 @@ describe('redux-slices/src/Slice', () => {
       expect(items).toEqual([INITIAL_STATE.items[1]]);
 
       const items2 = result(mockCompleteState, 2);
+
+      expect(items2).toBe(items);
+    });
+
+    it('should create a selector that does not re-compute the value if state is unchanged with extra arguments based on custom equality checks', () => {
+      const result = sliceBuilder.createMemoizedSelector(
+        (state, modulus: number) =>
+          state.items.filter(({ id }) => id % modulus === 0),
+        deepEqual,
+      );
+
+      const mockCompleteState = {
+        [sliceBuilder.name]: INITIAL_STATE,
+      };
+
+      const items = result(mockCompleteState, 2);
+
+      expect(items).toEqual([INITIAL_STATE.items[1]]);
+
+      // Deep copy of state
+      const mockUpdatedCompleteState = copy(mockCompleteState);
+
+      const items2 = result(mockUpdatedCompleteState, 2);
 
       expect(items2).toBe(items);
     });
