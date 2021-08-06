@@ -1,4 +1,4 @@
-import type SliceBuilder from './src/SliceBuilder';
+import type Slice from './src/Slice';
 import type { AnyState } from './src/internalTypes';
 
 /**
@@ -10,15 +10,20 @@ import type { AnyState } from './src/internalTypes';
  * @example
  * import { createSlice } from 'redux-slices';
  *
- * const slice = createSlice('counter', { count: 0 });
+ * export const name = 'counter';
+ *
+ * const INITIAL_STATE = { count: 0 };
+ *
+ * // Provide both the name and the initial state
+ * const slice = createSlice(name, INITIAL_STATE);
  *
  * // Build the action creators
- * const increment = slice.createAction('increment', (size = 1) => size);
- * const decrement = slice.createAction('decrement', (size = 1) => size);
- * const reset = slice.createAction('reset');
+ * export nameconst increment = slice.createAction('increment', (size = 1) => size);
+ * export const decrement = slice.createAction('decrement', (size = 1) => size);
+ * export const reset = slice.createAction('reset');
  *
  * // Build selectors specific to the slice
- * const getCount = slice.createSelector((state) => state.count);
+ * export const getCount = slice.createSelector((state) => state.count);
  *
  * // For optimal TypeScript inference, provide a map of type => action to `createReducer`.
  * type ActionMap = {
@@ -28,16 +33,10 @@ import type { AnyState } from './src/internalTypes';
  * };
  *
  * // Build reducer that is targeted to the actions for the slice
- * const reducer = slice.createReducer<ActionMap>({
+ * export const reducer = slice.createReducer<ActionMap>({
  *  [increment.type]: (state, { payload }) => ({ ...state, count: state.count + payload}),
  *  [decrement.type]: (state, { payload }) => ({ ...state, count: state.count - payload}),
- *  [reset.type]: (state) => slice.initialState,
- * });
- *
- * export default slice.createSlice({
- *  actionCreators: { increment, decrement, reset },
- *  reducer,
- *  selectors: { getCount },
+ *  [reset.type]: (state) => INITIAL_STATE,
  * });
  *
  * @param name name of the slice
@@ -47,4 +46,4 @@ import type { AnyState } from './src/internalTypes';
 export function createSlice<Name extends string, InitialState extends AnyState>(
   name: Name,
   initialState: InitialState,
-): SliceBuilder<Name, InitialState>;
+): Slice<Name, InitialState>;

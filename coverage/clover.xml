@@ -1,83 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1628092030749" clover="3.2.0">
-  <project timestamp="1628092030749" name="All files">
-    <metrics statements="68" coveredstatements="68" conditionals="34" coveredconditionals="34" methods="19" coveredmethods="19" elements="121" coveredelements="121" complexity="0" loc="68" ncloc="68" packages="1" files="3" classes="3"/>
+<coverage generated="1628269074012" clover="3.2.0">
+  <project timestamp="1628269074012" name="All files">
+    <metrics statements="58" coveredstatements="58" conditionals="28" coveredconditionals="28" methods="16" coveredmethods="16" elements="102" coveredelements="102" complexity="0" loc="58" ncloc="58" packages="1" files="2" classes="2"/>
     <file name="Slice.ts" path="/home/planttheidea/git/redux-slices/src/Slice.ts">
-      <metrics statements="5" coveredstatements="5" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
-      <line num="28" count="7" type="cond" truecount="2" falsecount="0"/>
-      <line num="29" count="7" type="stmt"/>
-      <line num="30" count="7" type="stmt"/>
-      <line num="31" count="7" type="cond" truecount="2" falsecount="0"/>
-      <line num="33" count="7" type="stmt"/>
-    </file>
-    <file name="SliceBuilder.ts" path="/home/planttheidea/git/redux-slices/src/SliceBuilder.ts">
-      <metrics statements="61" coveredstatements="61" conditionals="30" coveredconditionals="30" methods="17" coveredmethods="17"/>
-      <line num="17" count="3" type="stmt"/>
-      <line num="20" count="5" type="cond" truecount="2" falsecount="0"/>
-      <line num="21" count="2" type="stmt"/>
-      <line num="24" count="5" type="stmt"/>
-      <line num="35" count="9" type="stmt"/>
-      <line num="43" count="12" type="cond" truecount="2" falsecount="0"/>
-      <line num="44" count="1" type="stmt"/>
-      <line num="50" count="11" type="stmt"/>
-      <line num="51" count="11" type="stmt"/>
-      <line num="52" count="11" type="stmt"/>
-      <line num="53" count="11" type="stmt"/>
-      <line num="54" count="11" type="stmt"/>
-      <line num="56" count="11" type="stmt"/>
-      <line num="57" count="11" type="stmt"/>
-      <line num="79" count="14" type="stmt"/>
-      <line num="87" count="14" type="cond" truecount="2" falsecount="0"/>
-      <line num="88" count="5" type="cond" truecount="2" falsecount="0"/>
-      <line num="89" count="2" type="stmt"/>
-      <line num="90" count="2" type="stmt"/>
-      <line num="97" count="3" type="stmt"/>
-      <line num="98" count="3" type="stmt"/>
-      <line num="104" count="9" type="cond" truecount="2" falsecount="0"/>
-      <line num="105" count="1" type="stmt"/>
-      <line num="106" count="1" type="stmt"/>
-      <line num="112" count="8" type="stmt"/>
-      <line num="113" count="5" type="stmt"/>
-      <line num="118" count="14" type="stmt"/>
-      <line num="120" count="14" type="stmt"/>
+      <metrics statements="57" coveredstatements="57" conditionals="28" coveredconditionals="28" methods="15" coveredmethods="15"/>
+      <line num="13" count="2" type="stmt"/>
+      <line num="16" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="20" count="5" type="stmt"/>
+      <line num="31" count="9" type="stmt"/>
+      <line num="39" count="10" type="cond" truecount="2" falsecount="0"/>
+      <line num="40" count="1" type="stmt"/>
+      <line num="46" count="9" type="stmt"/>
+      <line num="47" count="9" type="stmt"/>
+      <line num="48" count="9" type="stmt"/>
+      <line num="49" count="9" type="stmt"/>
+      <line num="51" count="9" type="stmt"/>
+      <line num="52" count="9" type="stmt"/>
+      <line num="74" count="13" type="stmt"/>
+      <line num="82" count="13" type="cond" truecount="2" falsecount="0"/>
+      <line num="83" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="84" count="2" type="stmt"/>
+      <line num="85" count="2" type="stmt"/>
+      <line num="92" count="3" type="stmt"/>
+      <line num="93" count="3" type="stmt"/>
+      <line num="99" count="8" type="cond" truecount="2" falsecount="0"/>
+      <line num="100" count="1" type="stmt"/>
+      <line num="101" count="1" type="stmt"/>
+      <line num="107" count="7" type="stmt"/>
+      <line num="108" count="5" type="stmt"/>
+      <line num="113" count="13" type="stmt"/>
+      <line num="115" count="13" type="stmt"/>
+      <line num="135" count="8" type="stmt"/>
+      <line num="137" count="8" type="stmt"/>
       <line num="140" count="8" type="stmt"/>
-      <line num="142" count="8" type="stmt"/>
-      <line num="145" count="8" type="stmt"/>
+      <line num="142" count="14" type="stmt"/>
+      <line num="143" count="14" type="stmt"/>
+      <line num="145" count="14" type="stmt"/>
       <line num="147" count="14" type="stmt"/>
-      <line num="148" count="14" type="stmt"/>
-      <line num="150" count="14" type="stmt"/>
-      <line num="152" count="14" type="stmt"/>
-      <line num="154" count="14" type="cond" truecount="2" falsecount="0"/>
-      <line num="155" count="6" type="stmt"/>
-      <line num="156" count="9" type="cond" truecount="2" falsecount="0"/>
-      <line num="157" count="2" type="stmt"/>
-      <line num="158" count="2" type="stmt"/>
-      <line num="163" count="14" type="cond" truecount="2" falsecount="0"/>
-      <line num="164" count="10" type="stmt"/>
-      <line num="165" count="10" type="stmt"/>
-      <line num="168" count="14" type="stmt"/>
-      <line num="175" count="8" type="stmt"/>
-      <line num="177" count="8" type="cond" truecount="2" falsecount="0"/>
-      <line num="178" count="4" type="stmt"/>
-      <line num="181" count="3" type="stmt"/>
-      <line num="184" count="4" type="cond" truecount="4" falsecount="0"/>
-      <line num="185" count="3" type="stmt"/>
-      <line num="189" count="7" type="stmt"/>
-      <line num="191" count="7" type="cond" truecount="2" falsecount="0"/>
-      <line num="195" count="1" type="stmt"/>
-      <line num="211" count="7" type="stmt"/>
-      <line num="214" count="7" type="stmt"/>
-      <line num="216" count="6" type="stmt"/>
-      <line num="218" count="6" type="stmt"/>
-      <line num="220" count="6" type="stmt"/>
-      <line num="239" count="5" type="stmt"/>
-      <line num="241" count="5" type="stmt"/>
-      <line num="244" count="1" type="cond" truecount="2" falsecount="0"/>
+      <line num="149" count="14" type="cond" truecount="2" falsecount="0"/>
+      <line num="150" count="6" type="stmt"/>
+      <line num="151" count="9" type="cond" truecount="2" falsecount="0"/>
+      <line num="152" count="2" type="stmt"/>
+      <line num="153" count="2" type="stmt"/>
+      <line num="158" count="14" type="cond" truecount="2" falsecount="0"/>
+      <line num="159" count="10" type="stmt"/>
+      <line num="160" count="10" type="stmt"/>
+      <line num="163" count="14" type="stmt"/>
+      <line num="170" count="6" type="stmt"/>
+      <line num="172" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="173" count="2" type="stmt"/>
+      <line num="176" count="3" type="stmt"/>
+      <line num="179" count="4" type="cond" truecount="4" falsecount="0"/>
+      <line num="180" count="3" type="stmt"/>
+      <line num="184" count="7" type="stmt"/>
+      <line num="186" count="7" type="cond" truecount="2" falsecount="0"/>
+      <line num="190" count="1" type="stmt"/>
+      <line num="206" count="6" type="stmt"/>
+      <line num="209" count="6" type="stmt"/>
+      <line num="211" count="6" type="stmt"/>
+      <line num="213" count="6" type="stmt"/>
+      <line num="215" count="6" type="stmt"/>
     </file>
     <file name="index.ts" path="/home/planttheidea/git/redux-slices/src/index.ts">
-      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-      <line num="12" count="1" type="stmt"/>
-      <line num="18" count="3" type="stmt"/>
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <line num="16" count="3" type="stmt"/>
     </file>
   </project>
 </coverage>
