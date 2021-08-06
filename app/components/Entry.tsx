@@ -1,11 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from './Button';
 import { DARK_GRAY, LIGHT_GRAY, WHITE } from '../styles';
 import { todos } from '../store';
 
-import type { KeyboardEvent, MouseEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 
 const { addTodo, clearTodos, getItems } = todos;
 
@@ -32,54 +32,74 @@ const Input = styled.input`
   }
 `;
 
-function clearAndFocus(input: HTMLInputElement) {
-  input.value = '';
-  input.focus();
-}
-
-function submit(
-  dispatch: ReturnType<typeof useDispatch>,
-  input: HTMLInputElement,
-) {
-  dispatch(addTodo(input.value));
-  clearAndFocus(input);
-}
-
 export default function Entry() {
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
+  const [disabled, setDisabled] = useState(true);
+
+  const clearAndFocus = useCallback(() => {
+    if (!inputRef.current) {
+      return;
+    }
+
+    inputRef.current.value = '';
+    inputRef.current.focus();
+
+    setDisabled(true);
+  }, [inputRef, setDisabled]);
+
   const onClickAdd = useCallback(
     (event: MouseEvent) => {
       event.preventDefault();
 
-      submit(dispatch, inputRef.current);
+      dispatch(addTodo(inputRef.current.value));
+      clearAndFocus();
     },
-    [inputRef],
+    [inputRef, setDisabled],
   );
-  const onClickClear = useCallback((event: MouseEvent) => {
-    event.preventDefault();
+  const onClickClear = useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault();
 
-    dispatch(clearTodos());
-    clearAndFocus(inputRef.current);
-  }, []);
+      dispatch(clearTodos());
+      clearAndFocus();
+    },
+    [setDisabled],
+  );
   const onKeyDownSubmit = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         event.preventDefault();
 
-        submit(dispatch, inputRef.current);
+        dispatch(addTodo(inputRef.current.value));
+        clearAndFocus();
       }
     },
     [inputRef],
+  );
+  const onChangeInput = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const shouldBeDisabled = !event.target.value;
+
+      if (shouldBeDisabled !== disabled) {
+        setDisabled(shouldBeDisabled);
+      }
+    },
+    [inputRef, disabled, setDisabled],
   );
 
   const items = useSelector(getItems);
 
   return (
     <Container>
-      <Input autoFocus onKeyDown={onKeyDownSubmit} ref={inputRef} />
-      <Button onClick={onClickAdd} type="submit">
+      <Input
+        autoFocus
+        onChange={onChangeInput}
+        onKeyDown={onKeyDownSubmit}
+        ref={inputRef}
+      />
+      <Button disabled={disabled} onClick={onClickAdd} type="submit">
         Add
       </Button>
       {Boolean(items.length) && (

@@ -29,7 +29,7 @@ export default function Items() {
       {items.length ? (
         items.map((item) => <Item key={item.value} item={item} />)
       ) : (
-        <NoItems>No items on the list yet.</NoItems>
+        <NoItems>No items on the list yet!</NoItems>
       )}
     </Container>
   );

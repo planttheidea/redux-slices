@@ -18,4 +18,14 @@ export default styled.button`
     background-color: ${LIGHT_GRAY};
     color: ${WHITE};
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background-color: inherit;
+      color: ${DARK_GRAY};
+    }
+  }
 `;
