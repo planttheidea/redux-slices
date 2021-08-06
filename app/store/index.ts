@@ -1,5 +1,5 @@
 import { combineReducers, createStore } from 'redux';
-import todos from './todos';
+import * as todos from './todos';
 
 export { todos };
 

@@ -1,4 +1,6 @@
-import { createSliceBuilder } from '../../src';
+import { createSlice } from '../../src';
+
+export const name = 'todos';
 
 export type Item = {
   complete: boolean;
@@ -13,13 +15,15 @@ const INITIAL_STATE: State = {
   items: [],
 };
 
-const { createAction, createMemoizedSelector, createReducer, createSlice } =
-  createSliceBuilder('todos', INITIAL_STATE);
+const { createAction, createMemoizedSelector, createReducer } = createSlice(
+  name,
+  INITIAL_STATE,
+);
 
-const addTodo = createAction('add', (todo: string) => todo);
-const clearTodos = createAction('clear');
-const removeTodo = createAction('remove', (todo: Item) => todo);
-const toggleTodoComplete = createAction(
+export const addTodo = createAction('add', (todo: string) => todo);
+export const clearTodos = createAction('clear');
+export const removeTodo = createAction('remove', (todo: Item) => todo);
+export const toggleTodoComplete = createAction(
   'toggle-complete',
   (item: Item) => item,
 );
@@ -31,7 +35,7 @@ type Actions = {
   [toggleTodoComplete.type]: typeof toggleTodoComplete;
 };
 
-const reducer = createReducer<Actions>({
+export const reducer = createReducer<Actions>({
   [addTodo.type]: (state, { payload: value }) => ({
     ...state,
     items: [...state.items, { complete: false, value }],
@@ -49,10 +53,4 @@ const reducer = createReducer<Actions>({
   }),
 });
 
-const getItems = createMemoizedSelector((state) => state.items);
-
-export default createSlice({
-  actionCreators: { addTodo, clearTodos, removeTodo, toggleTodoComplete },
-  reducer,
-  selectors: { getItems },
-});
+export const getItems = createMemoizedSelector((state) => state.items);

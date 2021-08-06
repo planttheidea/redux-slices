@@ -4,9 +4,7 @@ import { useSelector } from 'react-redux';
 import Item from './Item';
 import { todos } from '../store';
 
-const {
-  selectors: { getItems },
-} = todos;
+const { getItems } = todos;
 
 const Container = styled.div`
   margin-top: 15px;

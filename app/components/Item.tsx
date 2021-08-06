@@ -7,9 +7,7 @@ import { todos } from '../store';
 
 import type { Item as ItemType } from '../store/todos';
 
-const {
-  actionCreators: { removeTodo, toggleTodoComplete },
-} = todos;
+const { removeTodo, toggleTodoComplete } = todos;
 
 const Container = styled.div`
   border-top: 1px dotted ${LIGHT_GRAY};

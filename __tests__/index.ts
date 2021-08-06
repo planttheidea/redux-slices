@@ -1,8 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import SliceBuilder from '../src/SliceBuilder';
 import Slice from '../src/Slice';
-import { createSliceBuilder } from '../src/index';
+import { createSlice } from '../src/index';
 
 const INITIAL_STATE = {
   items: [
@@ -13,18 +12,20 @@ const INITIAL_STATE = {
 };
 
 describe('redux-slices', () => {
-  describe('createSliceBuilder', () => {
-    it('should create a `SliceBuilder`', () => {
-      const sliceBuilder = createSliceBuilder('slice', INITIAL_STATE);
+  describe('createSlice', () => {
+    it('should create a `Slice`', () => {
+      const slice = createSlice('slice', INITIAL_STATE);
 
-      expect(sliceBuilder).toBeInstanceOf(SliceBuilder);
-      expect(sliceBuilder.name).toBe('slice');
-      expect(sliceBuilder.initialState).toBe(INITIAL_STATE);
+      expect(slice).toBeInstanceOf(Slice);
+      expect(slice.name).toBe('slice');
+      expect(slice.initialState).toBe(INITIAL_STATE);
     });
 
-    it('should allow for building a full `Slice`', () => {
-      const { createAction, createReducer, createSelector, createSlice } =
-        createSliceBuilder('slice', INITIAL_STATE);
+    it('should allow for building a slice with action creators, selectors, and a reducer', () => {
+      const { createAction, createReducer, createSelector } = createSlice(
+        'slice',
+        INITIAL_STATE,
+      );
 
       const add = createAction('add');
       const reducer = createReducer({
@@ -38,21 +39,16 @@ describe('redux-slices', () => {
       });
       const getItems = createSelector((state) => state.items);
 
-      const slice = createSlice({
-        actionCreators: { add },
-        reducer,
-        selectors: { getItems },
-      });
-
-      expect(slice).toBeInstanceOf(Slice);
-      expect(slice.actionCreators).toEqual({ add });
-      expect(slice.reducer).toBe(reducer);
-      expect(slice.selectors).toEqual({ getItems });
+      expect(add).toEqual(expect.any(Function));
+      expect(reducer).toEqual(expect.any(Function));
+      expect(getItems).toEqual(expect.any(Function));
     });
 
     it('should work as expected with redux', () => {
-      const { createAction, createReducer, createSelector, createSlice } =
-        createSliceBuilder('slice', INITIAL_STATE);
+      const { createAction, createReducer, createSelector } = createSlice(
+        'slice',
+        INITIAL_STATE,
+      );
 
       const add = createAction('add');
       const sliceReducer = createReducer({
@@ -66,16 +62,10 @@ describe('redux-slices', () => {
       });
       const getItems = createSelector((state) => state.items);
 
-      const slice = createSlice({
-        actionCreators: { add },
-        reducer: sliceReducer,
-        selectors: { getItems },
-      });
-
-      const sliceReducerSpy = jest.fn(slice.reducer);
+      const sliceReducerSpy = jest.fn(sliceReducer);
 
       const reducer = combineReducers({
-        [slice.name]: sliceReducerSpy,
+        slice: sliceReducerSpy,
       });
       const middleware = applyMiddleware(thunk);
       const store = createStore(reducer, middleware);

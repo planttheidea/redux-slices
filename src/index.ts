@@ -1,4 +1,4 @@
-import SliceBuilder from './SliceBuilder';
+import SliceBuilder from './Slice';
 
 import type { AnyState } from './internalTypes';
 
@@ -9,9 +9,9 @@ import type { AnyState } from './internalTypes';
  * @param initialState initial state of the slice
  * @returns SliceBuilder instance
  */
-export function createSliceBuilder<
-  Name extends string,
-  InitialState extends AnyState,
->(name: Name, initialState: InitialState) {
+export function createSlice<Name extends string, InitialState extends AnyState>(
+  name: Name,
+  initialState: InitialState,
+) {
   return new SliceBuilder(name, initialState);
 }

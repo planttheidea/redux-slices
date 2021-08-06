@@ -7,10 +7,7 @@ import { todos } from '../store';
 
 import type { KeyboardEvent, MouseEvent } from 'react';
 
-const {
-  actionCreators: { addTodo, clearTodos },
-  selectors: { getItems },
-} = todos;
+const { addTodo, clearTodos, getItems } = todos;
 
 const Container = styled.div`
   display: flex;

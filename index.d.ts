@@ -8,9 +8,9 @@ import type { AnyState } from './src/internalTypes';
  * - Store the generated methods on a static slice, which can be consumed throughout the app.
  *
  * @example
- * import { createSliceBuilder } from 'redux-slices';
+ * import { createSlice } from 'redux-slices';
  *
- * const slice = createSliceBuilder('counter', { count: 0 });
+ * const slice = createSlice('counter', { count: 0 });
  *
  * // Build the action creators
  * const increment = slice.createAction('increment', (size = 1) => size);
@@ -44,7 +44,7 @@ import type { AnyState } from './src/internalTypes';
  * @param initialState initial state of the slice
  * @returns tools with which a slice can be built
  */
-export function createSliceBuilder<
-  Name extends string,
-  InitialState extends AnyState,
->(name: Name, initialState: InitialState): SliceBuilder<Name, InitialState>;
+export function createSlice<Name extends string, InitialState extends AnyState>(
+  name: Name,
+  initialState: InitialState,
+): SliceBuilder<Name, InitialState>;
