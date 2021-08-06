@@ -12,6 +12,13 @@ import type {
 
 const slice = Array.prototype.slice;
 
+/**
+ * Apply the `error: true` property to the action passed if the `payload` is
+ * an instance of an `Error`.
+ *
+ * @param action the action to possibly augment
+ * @returns the action passed
+ */
 function applyErrorToAction(action: GeneralAction) {
   if (action.payload instanceof Error) {
     action.error = true;
@@ -29,6 +36,30 @@ function applyErrorToAction(action: GeneralAction) {
  */
 function isStrictlyEqual(a: any, b: any) {
   return a === b;
+}
+
+/**
+ * Determine whether the argument arrays passed are equal in value, based on the `isEqual` method used.
+ *
+ * @param nextArgs the args being passed now
+ * @param prevArgs the previous args passed
+ * @param size the size of the arguments (passed explicitly to avoid multiple `.length` requests)
+ * @param isEqual method to test equality of the arguments
+ * @returns whether the argument arrays are equal
+ */
+function areArgsEqual(
+  nextArgs: any[],
+  prevArgs: any[],
+  size: number,
+  isEqual: typeof isStrictlyEqual,
+) {
+  for (let index = 0; index < size; ++index) {
+    if (!isEqual(nextArgs[index], prevArgs[index])) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export default class Slice<Name extends string, State extends AnyState> {
@@ -139,31 +170,31 @@ export default class Slice<Name extends string, State extends AnyState> {
 
     return function (state: ParentState<Name, State>) {
       // Leveraging `slice.call(arguments)` to avoid inline for loop.
-      const args = slice.call(arguments, 0) as CompleteArgs;
-      const size = args.length;
+      const nextArgs = slice.call(arguments, 0) as CompleteArgs;
 
-      args[0] = state[name];
+      nextArgs[0] = state[name];
 
-      let shouldUpdate = size !== prevArgs.length;
+      const size = nextArgs.length;
 
-      if (!shouldUpdate) {
-        for (let index = 0; index < size; ++index) {
-          if (!isEqual(args[index], prevArgs[index])) {
-            shouldUpdate = true;
-            break;
-          }
-        }
-      }
-
-      if (shouldUpdate) {
-        prevArgs = args;
-        prevResult = selector.apply(null, args);
+      if (
+        size !== prevArgs.length ||
+        areArgsEqual(nextArgs, prevArgs, size, isEqual)
+      ) {
+        prevArgs = nextArgs;
+        prevResult = selector.apply(null, nextArgs);
       }
 
       return prevResult;
     } as unknown as Selector<Name, State, Args, Result>;
   }
 
+  /**
+   * Create a reducer method, either based on the method passed itself or a map of action handlers that will
+   * handle state updates in a targeted way for the action type.
+   *
+   * @param handler either the reducer method itself, or a map of action handlers that build a targeted reducer
+   * @returns the reducer method used by redux
+   */
   createReducer<ActionMap extends Record<string, GeneralActionCreator>>(
     handler: Reducer<State, GeneralAction> | ReducerMap<State, ActionMap>,
   ) {
