@@ -73,5 +73,5 @@
     "test:watch": "npm run test -- --watch",
     "typecheck": "tsc"
   },
-  "version": "1.0.0"
+  "version": "0.0.1"
 }
