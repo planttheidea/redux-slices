@@ -2,6 +2,7 @@ import type { Reducer as ReduxReducer } from 'redux';
 import type { Tuple } from 'ts-toolbelt';
 
 export type AnyState = { [key: string]: any };
+export type Simplify<Type> = { [Key in keyof Type]: Type[Key] };
 
 type FluxStandardAction<Type, Payload, Meta> = Payload extends undefined
   ? Meta extends undefined
@@ -40,6 +41,12 @@ export type ActionCreator<
     ) => FluxStandardAction<Type, undefined, ReturnType<MetaCreator>>
   : () => FluxStandardAction<Type, undefined, undefined>;
 
+export type SliceActionCreator<
+  Type extends string,
+  PayloadCreator,
+  MetaCreator,
+> = ActionCreator<Type, PayloadCreator, MetaCreator> & { type: Type };
+
 export type GeneralAction = {
   error?: true;
   meta?: any;
@@ -47,7 +54,9 @@ export type GeneralAction = {
   type: string;
 };
 
-export type GeneralActionCreator = (...args: any[]) => GeneralAction;
+export type GeneralActionCreator = ((...args: any[]) => GeneralAction) & {
+  type: string;
+};
 
 export type ParentState<SliceName extends string, State> = Record<
   string,
@@ -80,3 +89,20 @@ export type SliceSelector<
   Args extends unknown[],
   Result,
 > = (state: State, ...remainingArgs: Args) => Result;
+
+type ToActionMap<
+  ActionCreators extends readonly any[],
+  Result,
+> = ActionCreators extends readonly [
+  infer ActionCreator,
+  ...infer RemainingActionCreators
+]
+  ? {
+      // @ts-ignore - `type` exists on the `ActionCreator`
+      [Key in ActionCreator['type']]: ActionCreator;
+    } & ToActionMap<RemainingActionCreators, Result>
+  : Result;
+
+export type ActionCreatorMap<ActionCreators extends readonly any[]> = Simplify<
+  ToActionMap<ActionCreators, {}>
+>;

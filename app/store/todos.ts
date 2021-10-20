@@ -1,5 +1,7 @@
 import { createSlice } from '../../src';
 
+import type { ActionCreatorMap } from '../../src';
+
 export const name = 'todos';
 
 export type Item = {
@@ -28,14 +30,16 @@ export const toggleTodoComplete = createAction(
   (item: Item) => item,
 );
 
-type Actions = {
-  [addTodo.type]: typeof addTodo;
-  [clearTodos.type]: typeof clearTodos;
-  [removeTodo.type]: typeof removeTodo;
-  [toggleTodoComplete.type]: typeof toggleTodoComplete;
-};
+type ActionCreators = ActionCreatorMap<
+  [
+    typeof addTodo,
+    typeof clearTodos,
+    typeof removeTodo,
+    typeof toggleTodoComplete,
+  ]
+>;
 
-export const reducer = createReducer<Actions>({
+export const reducer = createReducer<ActionCreators>({
   [addTodo.type]: (state, { payload: value }) => ({
     ...state,
     items: [...state.items, { complete: false, value }],

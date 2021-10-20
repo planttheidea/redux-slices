@@ -1,5 +1,4 @@
 import type {
-  ActionCreator,
   AnyState,
   GeneralAction,
   GeneralActionCreator,
@@ -7,6 +6,7 @@ import type {
   Reducer,
   ReducerMap,
   Selector,
+  SliceActionCreator,
   SliceSelector,
 } from './internalTypes';
 
@@ -143,11 +143,11 @@ export default class Slice<Name extends string, State extends AnyState> {
     // Set as frozen property to avoid accidental overwrites, but also prevent enumeration.
     Object.defineProperty(actionCreator, 'type', { value: type });
 
-    return actionCreator as ActionCreator<
+    return actionCreator as SliceActionCreator<
       typeof type,
       PayloadCreator,
       MetaCreator
-    > & { type: typeof type };
+    >;
   }
 
   /**
