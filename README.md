@@ -226,15 +226,13 @@ There are libraries in the wild that try to solve the same problem `redux-slices
 
 ### [`createSlice` from Redux Toolkit](https://redux-toolkit.js.org/api/createSlice)
 
-Very commonly-used alternative, but a few limitations:
+Redux Toolkit, and the RTK team in general, garner much respect. For most projects RTK is a great way to hit the ground running. That said, there are a few limitations with the `createSlice` API:
 
 - Generated once through a large configuration object (readability can suffer with large slices)
 - Forces use of `immer` for state changes
 - Typing of action payloads is manual
 - Custom action creators are clunky, and do not conform to FSA standards
 - Use with action creators for external slices via `extraReducers` can be challenging and confusing
-
-Lots of respect for the RTK team in general, and for most projects RTK is a great way to hit the ground running.
 
 ### [`redux-actions`](https://github.com/redux-utilities/redux-actions)
 
