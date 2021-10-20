@@ -52,8 +52,7 @@ export type GeneralActionCreator = (...args: any[]) => GeneralAction;
 export type ParentState<SliceName extends string, State extends any> = Record<
   string,
   any
-> &
-  { [Key in SliceName]: State };
+> & { [Key in SliceName]: State };
 
 export type Reducer<State extends AnyState, Action extends GeneralAction> = (
   state: State,
