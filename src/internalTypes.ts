@@ -103,6 +103,6 @@ type ToActionMap<
     } & ToActionMap<RemainingActionCreators, Result>
   : Result;
 
-export type ActionMap<ActionCreators extends readonly any[]> = Simplify<
+export type ActionCreatorMap<ActionCreators extends readonly any[]> = Simplify<
   ToActionMap<ActionCreators, {}>
 >;

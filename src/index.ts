@@ -2,7 +2,7 @@ import Slice from './Slice';
 
 import type { AnyState } from './internalTypes';
 
-export type { ActionMap } from './internalTypes';
+export type { ActionCreatorMap } from './internalTypes';
 
 /**
  * Create a new Slice instance based on the `name` and `initialState` passed.
