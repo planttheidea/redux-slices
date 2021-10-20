@@ -10,13 +10,8 @@ const ROOT = path.join(__dirname, 'dist');
 
 const config = {
   devServer: {
-    contentBase: ROOT,
     compress: true,
     port: PORT,
-    stats: {
-      colors: true,
-      progress: true,
-    },
   },
 
   devtool: 'source-map',
