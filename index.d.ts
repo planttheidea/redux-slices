@@ -1,6 +1,8 @@
 import type Slice from './src/Slice';
 import type { AnyState } from './src/internalTypes';
 
+export type { ActionCreatorMap } from './src/internalTypes';
+
 /**
  * Create a new Slice based on the `name` and `initialState` passed. This is handled in two stages:
  * - Create a slice builder, which will provide methods by which action creators, slice-specific
