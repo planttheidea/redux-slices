@@ -11,6 +11,9 @@ Manage slices of redux store in a concise, clear, and well-typed way
       - [ActionCreatorMap](#actioncreatormap)
     - [createSelector](#createselector)
     - [createMemoizedSelector](#creatememoizedselector)
+  - [Comparable libraries](#comparable-libraries)
+    - [`createSlice` from Redux Toolkit](#createslice-from-redux-toolkit)
+    - [`redux-actions`](#redux-actions)
 
 ## Usage
 
@@ -76,7 +79,7 @@ function createAction(
 ): ((...args: any[]) => any) & { type: string };
 ```
 
-Creates an action creator that will construct the action in a Flux Standard Action format based on the type and getters passed:
+Creates an action creator that will construct the action in a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) format based on the type and getters passed:
 
 - If both getters are passed, the action will contain both `payload` and `meta`
 - If only `getPayload` is passed, the action will contain `payload` but not `meta`
@@ -216,3 +219,23 @@ const getOpenItems = createMemoizedSelector((slice) =>
 ```
 
 _NOTE_: Memoization has inherent runtime costs, which may not be worth if the values being returned from the selector have consistent references (e.g., if simply returning values from state). For simpler use-cases, it is recommended to use [`createSelector`](#createselector) instead.
+
+## Comparable libraries
+
+There are libraries in the wild that try to solve the same problem `redux-slices` solves, but there are some differences worth calling out. As a note, these comparisons are based on generating action creators and reducers; the scoped selector concept that `redux-slices` provides do not exist in these libraries.
+
+### [`createSlice` from Redux Toolkit](https://redux-toolkit.js.org/api/createSlice)
+
+Very commonly-used alternative, but a few limitations:
+
+- Generated once through a large configuration object (readability can suffer with large slices)
+- Forces use of `immer` for state changes
+- Typing of action payloads is manual
+- Custom action creators are clunky, and do not conform to FSA standards
+- Use with action creators for external slices via `extraReducers` can be challenging and confusing
+
+Lots of respect for the RTK team in general, and for most projects RTK is a great way to hit the ground running.
+
+### [`redux-actions`](https://github.com/redux-utilities/redux-actions)
+
+While it is longer maintained, it has similar goals. Like `redux-slices`, it follows FSA standards, and is agnostic about how state changes occur. The main difference is typing; the library was not written with first-class TS support in mind, and therefore the action creators and reducers require a lot of manual typing.
