@@ -157,7 +157,7 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param isEqual method to determine equality of arguments passed to the selector
    * @returns result of calling the selector
    */
-  createMemoizedSelector<Args extends unknown[], Result extends any>(
+  createMemoizedSelector<Args extends unknown[], Result>(
     selector: SliceSelector<State, Args, Result>,
     isEqual = isStrictlyEqual,
   ) {
@@ -229,7 +229,7 @@ export default class Slice<Name extends string, State extends AnyState> {
    * @param selector slice-specific selector function
    * @returns result of calling the selector
    */
-  createSelector<Args extends unknown[], Result extends any>(
+  createSelector<Args extends unknown[], Result>(
     selector: SliceSelector<State, Args, Result>,
   ) {
     type CompleteArgs = [State, ...Args];

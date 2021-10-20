@@ -49,7 +49,7 @@ export type GeneralAction = {
 
 export type GeneralActionCreator = (...args: any[]) => GeneralAction;
 
-export type ParentState<SliceName extends string, State extends any> = Record<
+export type ParentState<SliceName extends string, State> = Record<
   string,
   any
 > & { [Key in SliceName]: State };
@@ -72,11 +72,11 @@ export type Selector<
   Name extends string,
   State extends AnyState,
   Args extends unknown[],
-  Result extends any,
+  Result,
 > = (state: ParentState<Name, State>, ...remainingArgs: Args) => Result;
 
 export type SliceSelector<
   State extends AnyState,
   Args extends unknown[],
-  Result extends any,
+  Result,
 > = (state: State, ...remainingArgs: Args) => Result;
