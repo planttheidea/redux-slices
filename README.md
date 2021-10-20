@@ -2,6 +2,16 @@
 
 Manage slices of redux store in a concise, clear, and well-typed way
 
+- [redux-slices](#redux-slices)
+  - [Usage](#usage)
+  - [API](#api)
+    - [createSlice](#createslice)
+    - [createAction](#createaction)
+    - [createReducer](#createreducer)
+      - [ActionCreatorMap](#actioncreatormap)
+    - [createSelector](#createselector)
+    - [createMemoizedSelector](#creatememoizedselector)
+
 ## Usage
 
 ```ts
