@@ -13,7 +13,7 @@ export type { ActionCreatorMap } from './internalTypes';
  */
 export function createSlice<Name extends string, InitialState extends AnyState>(
   name: Name,
-  initialState: InitialState,
+  initialState?: InitialState,
 ) {
   return new Slice(name, initialState);
 }

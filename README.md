@@ -6,6 +6,7 @@ Manage slices of redux store in a concise, clear, and well-typed way
   - [Usage](#usage)
   - [API](#api)
     - [createSlice](#createslice)
+      - [Initial state typing](#initial-state-typing)
     - [createAction](#createaction)
     - [createReducer](#createreducer)
       - [ActionCreatorMap](#actioncreatormap)
@@ -64,10 +65,23 @@ export const getTodos = createSelector((slice) => slice.items);
 ### createSlice
 
 ```ts
-function createSlice(sliceName: string, initialState: object): Slice;
+function createSlice(sliceName: string, initialState?: object): Slice;
 ```
 
-Creates a slice of state based on the name and initial state passed, and returns a suite of utilities that allow construction of common redux implementation methods.
+Creates a slice of state based on the name and initial state passed, and returns a suite of utilities that allow construction of common redux implementation methods. If `initialState` is not passed, the slice will default to an empty object for its state.
+
+#### Initial state typing
+
+Clearly defining the contract of your Redux state is considered a best practice, and `redux-slices` leans into this by making the type of your state object inferred from the `initialState` value passed. However, there are some scenarios where you want more control over the typing:
+
+- You defined your initial state with `as const`, and you want the state typing to be wider
+- You have dynamic population of the state, and you start with an empty object
+
+In these cases, you can pass generics to `createSlice` to ensure this typing is respected:
+
+```ts
+const slice = createSlice<'name', { dynamic?: boolean }>('name', {});
+```
 
 ### createAction
 
