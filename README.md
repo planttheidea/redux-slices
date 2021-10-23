@@ -31,9 +31,9 @@ const { createAction, createReducer, createSelector } = createSlice(
   INITIAL_STATE,
 );
 
-export const add = createAction('add', (todo: string) => todo);
-export const complete = createAction('complete', (item: Item) => item);
-export const remove = createAction('remove', (todo: Item) => todo);
+export const add = createAction('added', (todo: string) => todo);
+export const complete = createAction('completed', (item: Item) => item);
+export const remove = createAction('removed', (todo: Item) => todo);
 
 type HandledActions = ActionCreatorMap<
   [typeof add, typeof complete, typeof remove]
@@ -93,7 +93,7 @@ If using TypeScript, the action creator returned will create action objects that
 ```ts
 const { createAction } = createSlice('todos', { items: [] });
 
-const add = createAction('add', (value: string) => value);
+const add = createAction('added', (value: string) => value);
 // `action` is typed as { payload: string, type 'todos/add' }
 const action = add('stuff');
 ```
@@ -117,7 +117,7 @@ There are two ways to create a reducer:
 Using the former is preferred, because `redux-slices` will internally optimize the slice's reducer to only call handlers when the corresponding action type matches. `redux-slices` makes this easier by including the `type` property on any action creator generated with [`createAction`](#createaction):
 
 ```js
-const add = createAction('add', (value) => value);
+const add = createAction('added', (value) => value);
 
 const reducer = createReducer({
   [add.type]: (state, { payload: value }) => ({
@@ -130,7 +130,7 @@ const reducer = createReducer({
 If using TypeScript, you can pass a type map of type => handler, and it will narrowly-type all handlers for you:
 
 ```ts
-const add = createAction('add', (value) => value);
+const add = createAction('added', (value) => value);
 
 const actions = {
   [add.type]: add;
@@ -152,7 +152,7 @@ There is also a convenience type, [`ActionCreatorMap`](#actioncreatormap), provi
 If using TypeScript, an additional typing utility is provided to narrowly-type all handlers based on the actions for the slice without incurring any additional runtime cost.
 
 ```ts
-const add = createAction('add', (value: string) => value);
+const add = createAction('added', (value: string) => value);
 
 type ActionHandlers = ActionCreatorMap<[typeof add]>;
 
@@ -169,7 +169,7 @@ The action handler typing for the is also not specific to the slice the reducer 
 ```ts
 import { reset } from './appSlice';
 ...
-const add = createAction('add', (value: string) => value);
+const add = createAction('added', (value: string) => value);
 
 type ActionHandlers = ActionCreatorMap<[typeof add, typeof reset]>;
 
