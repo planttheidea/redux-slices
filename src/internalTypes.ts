@@ -1,8 +1,19 @@
 import type { Reducer as ReduxReducer } from 'redux';
-import type { Tuple } from 'ts-toolbelt';
 
 export type AnyState = { [key: string]: any };
 export type Simplify<Type> = { [Key in keyof Type]: Type[Key] };
+
+// Implementation and supporting types taken from `ts-toolbelt` Tuple.List
+type Has<U, U1> = [U1] extends [U] ? 1 : 0;
+type List<Value = any> = ReadonlyArray<Value>;
+type Longest<L extends List, L1 extends List> = L extends unknown
+  ? L1 extends unknown
+    ? {
+        0: L1;
+        1: L;
+      }[Has<keyof L, keyof L1>]
+    : never
+  : never;
 
 type FluxStandardAction<Type, Payload, Meta> = Payload extends undefined
   ? Meta extends undefined
@@ -23,10 +34,7 @@ export type ActionCreator<
 > = PayloadCreator extends (...args: any[]) => any
   ? MetaCreator extends (...args: any[]) => any
     ? (
-        ...args: Tuple.Longest<
-          Parameters<PayloadCreator>,
-          Parameters<MetaCreator>
-        >
+        ...args: Longest<Parameters<PayloadCreator>, Parameters<MetaCreator>>
       ) => FluxStandardAction<
         Type,
         ReturnType<PayloadCreator>,
