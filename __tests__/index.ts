@@ -21,6 +21,14 @@ describe('redux-slices', () => {
       expect(slice.initialState).toBe(INITIAL_STATE);
     });
 
+    it('should create a `Slice` without requiring an initial state', () => {
+      const slice = createSlice<'slice', { optional?: any[] }>('slice');
+
+      expect(slice).toBeInstanceOf(Slice);
+      expect(slice.name).toBe('slice');
+      expect(slice.initialState).toEqual({});
+    });
+
     it('should allow for building a slice with action creators, selectors, and a reducer', () => {
       const { createAction, createReducer, createSelector } = createSlice(
         'slice',

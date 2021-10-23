@@ -5,9 +5,6 @@
     "url": "https://github.com/planttheidea/redux-slices/issues"
   },
   "description": "Manage slices of a redux store in a concise, clear way",
-  "dependencies": {
-    "ts-toolbelt": "9.6.0"
-  },
   "devDependencies": {
     "@babel/cli": "7.15.7",
     "@babel/core": "7.15.8",
