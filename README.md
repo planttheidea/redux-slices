@@ -12,6 +12,7 @@ Manage slices of redux store in a concise, clear, and well-typed way
       - [ActionCreatorMap](#actioncreatormap)
     - [createSelector](#createselector)
     - [createMemoizedSelector](#creatememoizedselector)
+      - [Custom `isEqual`](#custom-isequal)
   - [Comparable libraries](#comparable-libraries)
     - [`createSlice` from Redux Toolkit](#createslice-from-redux-toolkit)
     - [`redux-actions`](#redux-actions)
@@ -219,6 +220,7 @@ _NOTE_: The selector created is not memoized. If you use the selector to derive 
 ```ts
 function createMemoizedSelector(
   selector: (slice: StateSlice, ...args: any[]) => any,
+  isEqual?: (prevArg: any, nextArg: any) => boolean)
 ): (state: State, ...args: any[]) => any;
 ```
 
@@ -233,6 +235,24 @@ const getOpenItems = createMemoizedSelector((slice) =>
 ```
 
 _NOTE_: Memoization has inherent runtime costs, which may not be worth if the values being returned from the selector have consistent references (e.g., if simply returning values from state). For simpler use-cases, it is recommended to use [`createSelector`](#createselector) instead.
+
+#### Custom `isEqual`
+
+Be default, `createMemoizedSelector` will do a referential equality check on each argument to determine if the selector should be called again; if all arguments are equal, then the memoized value is returned. However, if you have needs for a custom equality check, you can past it as the second parameter when creating the selector.
+
+```ts
+import { createSlice } from 'redux-slices';
+import { deepEqual } from 'fast-equal';
+
+const { createSelector } = createSlice('todos', { items: [] });
+
+const getOpenItems = createMemoizedSelector(
+  (slice) => slice.items.filter(item) => !item.completed),
+  deepEqual
+);
+```
+
+The above example would memoize based on the arguments being deeply equal.
 
 ## Comparable libraries
 
