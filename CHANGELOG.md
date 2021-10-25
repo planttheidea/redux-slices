@@ -1,6 +1,11 @@
 ## redux-slices CHANGELOG
 
-1.0.1
+1.0.2
+
+- Code cleanup
+- README improvements
+
+  1.0.1
 
 - Remove `ts-toolbelt` dependency
 - Clean up README a bit
