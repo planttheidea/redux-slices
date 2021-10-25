@@ -39,7 +39,7 @@ function isStrictlyEqual(a: any, b: any) {
 }
 
 /**
- * Determine whether the argument arrays passed are equal in value, based on the `isEqual` method used.
+ * Determine whether the argument arrays passed have changed in value, based on the `isEqual` method used.
  *
  * @param nextArgs the args being passed now
  * @param prevArgs the previous args passed
@@ -47,7 +47,7 @@ function isStrictlyEqual(a: any, b: any) {
  * @param isEqual method to test equality of the arguments
  * @returns whether the argument arrays are equal
  */
-function areArgsEqual(
+function haveArgsChanged(
   nextArgs: any[],
   prevArgs: any[],
   size: number,
@@ -178,7 +178,7 @@ export default class Slice<Name extends string, State extends AnyState> {
 
       if (
         size !== prevArgs.length ||
-        areArgsEqual(nextArgs, prevArgs, size, isEqual)
+        haveArgsChanged(nextArgs, prevArgs, size, isEqual)
       ) {
         prevArgs = nextArgs;
         prevResult = selector.apply(null, nextArgs);
