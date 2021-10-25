@@ -108,7 +108,7 @@ If using TypeScript, the action creator returned will create action objects that
 const { createAction } = createSlice('todos', { items: [] });
 
 const add = createAction('added', (value: string) => value);
-// `action` is typed as { payload: string, type 'todos/add' }
+// `action` is typed as { payload: string, type 'todos/added' }
 const action = add('stuff');
 ```
 
